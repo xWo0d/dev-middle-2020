@@ -28,7 +28,7 @@ class User private constructor(
 
     private var phone: String? = null
         set(value) {
-            field = value?.replace("[^+\\d]".toRegex(), "")
+            field = value?.replace("""[^+\d]""".toRegex(), "")
         }
 
     private var _login: String? = null
@@ -43,10 +43,18 @@ class User private constructor(
         ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
     }
 
-    private lateinit var passwordHash: String
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    lateinit var passwordHash: String
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     var accessCode: String? = null
+
+    fun generateAndSendAccessCode(phone: String) {
+        accessCode = generateAccessCode().also {
+            passwordHash = encrypt(it)
+            sendAccessCodeToUser(phone, it)
+        }
+    }
 
     // for email
     constructor(
@@ -66,10 +74,7 @@ class User private constructor(
         rawPhone: String
     ): this(firstName, lastName, rawPhone = rawPhone, meta = mapOf("auth" to "sms")) {
         println("Secondary phone constructor")
-        val code = generateAccessCode()
-        passwordHash = encrypt(generateAccessCode())
-        accessCode = code
-        sendAccessCodeToUser(rawPhone, code)
+        generateAndSendAccessCode(rawPhone)
     }
 
     private fun generateAccessCode(): String {
@@ -135,7 +140,10 @@ class User private constructor(
             val (firstName, lastName) = fullName.fullNameToPair()
 
             return when {
-                !phone.isNullOrBlank() -> User(firstName, lastName, phone)
+                !phone.isNullOrBlank() -> {
+                    if (!isValidPhone(phone)) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
+                    else User(firstName, lastName, phone)
+                }
                 !email.isNullOrBlank() && !password.isNullOrBlank() -> User(firstName, lastName, email, password)
                 else -> throw IllegalArgumentException("Email or phone must not be null or blank")
             }
@@ -152,6 +160,13 @@ class User private constructor(
                                 "and last name , current split result $this")
                     }
                 }
+        }
+
+        private fun isValidPhone(phone: String): Boolean {
+            if (!phone.startsWith("+")) return false
+
+            val numberString = phone.substringAfter("+").replace(" ", "")
+            return numberString.length == 11 && numberString.toLongOrNull() != null
         }
     }
 
