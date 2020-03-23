@@ -1,12 +1,9 @@
-package ru.skillbranch.kotlinexemple
+package ru.skillbranch.kotlinexample
 
+import org.junit.After
+import org.junit.Assert
 import org.junit.Test
-
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Rule
-import org.junit.rules.ExpectedException
-import java.lang.IllegalArgumentException
+import ru.skillbranch.kotlinexemple.UserHolder
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -15,17 +12,24 @@ import java.lang.IllegalArgumentException
  */
 class ExampleUnitTest {
 
-    val expectedException = ExpectedException.none()
+    /**
+        Добавьте метод в UserHolder для очистки значений UserHolder после выполнения каждого теста,
+        это необходимо чтобы тесты можно было запускать одновременно
 
-    @Rule fun expectedRule() = expectedException
-
-    @Before
-    fun resetMap() = UserHolder.clearMap()
+            @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+            fun clearHolder(){
+                map.clear()
+            }
+    */
+    @After
+    fun after(){
+        UserHolder.clearHolder()
+    }
 
     @Test
-    fun `register user with mail and password`() {
+    fun register_user_success() {
         val holder = UserHolder
-        holder.registerUser("John Doe", "John_Doe@unknown.com", "testPass")
+        val user = holder.registerUser("John Doe", "John_Doe@unknown.com","testPass")
         val expectedInfo = """
             firstName: John
             lastName: Doe
@@ -37,92 +41,148 @@ class ExampleUnitTest {
             meta: {auth=password}
         """.trimIndent()
 
-        val failResult = holder.loginUser("John_Doe@unknown.com", "testPass")
-        val succesResult = holder.loginUser("john_doe@unknown.com", "testPass")
+        Assert.assertEquals(expectedInfo, user.userInfo)
+    }
 
-        assertEquals(null, failResult)
-        assertEquals(expectedInfo, succesResult)
+    @Test(expected = IllegalArgumentException::class)
+    fun register_user_fail_blank() {
+        val holder = UserHolder
+        holder.registerUser("", "John_Doe@unknown.com","testPass")
+    }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun register_user_fail_illegal_name() {
+        val holder = UserHolder
+        holder.registerUser("John Jr Doe", "John_Doe@unknown.com","testPass")
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun register_user_fail_illegal_exist() {
+        val holder = UserHolder
+        holder.registerUser("John Doe", "John_Doe@unknown.com","testPass")
+        holder.registerUser("John Doe", "John_Doe@unknown.com","testPass")
     }
 
     @Test
-    fun `throw exception when try to register by email and password user with existed login`() {
+    fun register_user_by_phone_success() {
         val holder = UserHolder
+        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971 11-11")
+        val expectedInfo = """
+            firstName: John
+            lastName: Doe
+            login: +79179711111
+            fullName: John Doe
+            initials: J D
+            email: null
+            phone: +79179711111
+            meta: {auth=sms}
+        """.trimIndent()
 
-        expectedRule().expect(IllegalArgumentException::class.java)
-        expectedRule().expectMessage("A user with this email already exists")
+        Assert.assertEquals(expectedInfo, user.userInfo)
+        Assert.assertNotNull(user.accessCode)
+        Assert.assertEquals(6, user.accessCode?.length)
+    }
 
-        holder.registerUser("John Doe", "John_Doe@unknown.com", "testPass")
-        holder.registerUser("Abraam Lincoln", "John_Doe@unknown.com", "testPass")
+    @Test(expected = IllegalArgumentException::class)
+    fun register_user_by_phone_fail_blank() {
+        val holder = UserHolder
+        holder.registerUserByPhone("", "+7 (917) 971 11-11")
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun register_user_by_phone_fail_illegal_name() {
+        val holder = UserHolder
+        holder.registerUserByPhone("John Doe", "+7 (XXX) XX XX-XX")
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun register_user_failby_phone_illegal_exist() {
+        val holder = UserHolder
+        holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
+        holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
     }
 
     @Test
-    fun `throw exception when try to register by phone user with existed login`() {
+    fun login_user_success() {
         val holder = UserHolder
+        holder.registerUser("John Doe", "John_Doe@unknown.com","testPass")
+        val expectedInfo = """
+            firstName: John
+            lastName: Doe
+            login: john_doe@unknown.com
+            fullName: John Doe
+            initials: J D
+            email: John_Doe@unknown.com
+            phone: null
+            meta: {auth=password}
+        """.trimIndent()
 
-        expectedRule().expect(IllegalArgumentException::class.java)
-        expectedRule().expectMessage("A user with this phone already exists")
+        val successResult =  holder.loginUser("john_doe@unknown.com", "testPass")
 
-        holder.registerUserByPhone("John Doe", "+7 123 456 7890")
-        holder.registerUserByPhone("Abraam Lincoln", "+7 123 456 7890")
+        Assert.assertEquals(expectedInfo, successResult)
     }
 
     @Test
-    fun `register user with phone`() {
+    fun login_user_by_phone_success() {
         val holder = UserHolder
+        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
+        val expectedInfo = """
+            firstName: John
+            lastName: Doe
+            login: +79179711111
+            fullName: John Doe
+            initials: J D
+            email: null
+            phone: +79179711111
+            meta: {auth=sms}
+        """.trimIndent()
 
-        val phone = "+7 123 456 7891"
-        val normalizedPhone = "+71234567891"
+        val successResult =  holder.loginUser("+7 (917) 971-11-11", user.accessCode!!)
 
-        val user = holder.registerUserByPhone("John Doe", phone)
-        val pass = user.accessCode ?: ""
+        Assert.assertEquals(expectedInfo, successResult)
+    }
+
+    @Test
+    fun login_user_fail() {
+        val holder = UserHolder
+        holder.registerUser("John Doe", "John_Doe@unknown.com","testPass")
+
+        val failResult =  holder.loginUser("john_doe@unknown.com", "test")
+
+        Assert.assertNull(failResult)
+    }
+
+    @Test
+    fun login_user_not_found() {
+        val holder = UserHolder
+        holder.registerUser("John Doe", "John_Doe@unknown.com","testPass")
+
+        val failResult =  holder.loginUser("john_cena@unknown.com", "test")
+
+        Assert.assertNull(failResult)
+    }
+
+    @Test
+    fun request_access_code() {
+        val holder = UserHolder
+        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
+        val oldAccess = user.accessCode
+        holder.requestAccessCode("+7 (917) 971-11-11")
 
         val expectedInfo = """
             firstName: John
             lastName: Doe
-            login: $normalizedPhone
+            login: +79179711111
             fullName: John Doe
             initials: J D
             email: null
-            phone: $normalizedPhone
+            phone: +79179711111
             meta: {auth=sms}
         """.trimIndent()
 
-        val failResult = holder.loginUser(normalizedPhone, "wrongPass")
-        val succesResult = holder.loginUser(normalizedPhone, pass)
+        val successResult =  holder.loginUser("+7 (917) 971-11-11", user.accessCode!!)
 
-        assertTrue(pass.length == 6)
-        assertEquals(null, failResult)
-        assertEquals(expectedInfo, succesResult)
-    }
-
-    @Test
-    fun `throw IllegalArgumentException when register user with invalid number`() {
-        val holder = UserHolder
-
-        expectedRule().expect(IllegalArgumentException::class.java)
-        expectedRule().expectMessage("Enter a valid phone number starting with a + and containing 11 digits")
-
-        holder.registerUserByPhone("John Doe", "71234567890") // not start with "+"
-        holder.registerUserByPhone("John Doe", "+7123456789") // 10 digits
-        holder.registerUserByPhone("John Doe", "+7123456789a") // contains letters
-    }
-
-    @Test
-    fun `passwordHash and accessCode should be changed on request access code`() {
-        val holder = UserHolder
-        val phone = "+71234567890"
-
-        val user = holder.registerUserByPhone("John Doe", "+71234567890") // 1contains letters
-
-        val oldAccessCode = user.accessCode
-        val oldPasswordHash = user.passwordHash
-
-        holder.requestAccessCode(phone)
-
-        assertNotEquals(user.accessCode, oldAccessCode)
-        assertNotEquals(user.passwordHash, oldPasswordHash)
-        assertNotNull(holder.loginUser(phone, user.accessCode ?: ""))
-
+        Assert.assertNotEquals(oldAccess, user.accessCode!!)
+        Assert.assertEquals(expectedInfo, successResult)
     }
 }

@@ -32,21 +32,28 @@ object UserHolder {
     }
 
     fun loginUser(login: String, password: String): String? {
-        return map[login.trim()]?.run {
+        val loginKey = if (User.isValidPhone(login)) {
+            login.normalizePhone()
+        } else {
+            login.trim()
+        }
+        return map[loginKey]?.run {
             if (checkPassword(password)) this.userInfo
             else null
         }
     }
 
-    // Реализуй метод requestAccessCode(login: String) : Unit, после выполнения данного метода у
-    // пользователя с соответствующим логином должен быть сгенерирован новый код авторизации и
-    // помещен в свойство accessCode, соответственно должен измениться и хеш пароля пользователя
-    // (вызов метода loginUser должен отрабатывать корректно)
     fun requestAccessCode(login: String) {
-        map[login.trim()]?.let { it.generateAndSendAccessCode(login) }
+        val loginKey = if (User.isValidPhone(login)) {
+            login.normalizePhone()
+        } else {
+            login.trim()
+        }
+
+        map[loginKey]?.let { it.generateAndSendAccessCode(login) }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    fun clearMap() = map.clear()
+    fun clearHolder() = map.clear()
 
 }

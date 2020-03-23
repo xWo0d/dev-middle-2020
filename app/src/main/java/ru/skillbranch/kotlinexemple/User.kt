@@ -28,7 +28,7 @@ class User private constructor(
 
     private var phone: String? = null
         set(value) {
-            field = value?.replace("""[^+\d]""".toRegex(), "")
+            field = value?.normalizePhone()
         }
 
     private var _login: String? = null
@@ -92,8 +92,8 @@ class User private constructor(
     init {
         println("First init block, primary constructor was called")
 
-        check(!firstName.isBlank()) { "First name must not be blank" }
-        check(email.isNullOrBlank() || rawPhone.isNullOrBlank()) { "Email or phone must not be blank" }
+        check(firstName.isNotBlank()) { "First name must not be blank" }
+        check(!email.isNullOrBlank() || !rawPhone.isNullOrBlank()) { "Email or phone must not be blank" }
 
         phone = rawPhone
         login = email ?: phone!!
@@ -162,12 +162,14 @@ class User private constructor(
                 }
         }
 
-        private fun isValidPhone(phone: String): Boolean {
-            if (!phone.startsWith("+")) return false
-
-            val numberString = phone.substringAfter("+").replace(" ", "")
-            return numberString.length == 11 && numberString.toLongOrNull() != null
+        fun isValidPhone(phone: String): Boolean {
+            val normalizedPhone = phone.replace(" ", "")
+            val validRegex = """^\+\d((\d{3})|(\(\d{3}\)))\d{3}[-]?\d{2}[-]?\d{2}$""".toRegex()
+            return validRegex.containsMatchIn(normalizedPhone.trim())
         }
+
     }
 
 }
+
+fun String.normalizePhone() = replace("""[^+\d]""".toRegex(), "")
