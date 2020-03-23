@@ -1,4 +1,4 @@
-package ru.skillbranch.kotlinexemple
+package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
 import java.lang.IllegalArgumentException
@@ -141,10 +141,22 @@ class User private constructor(
 
             return when {
                 !phone.isNullOrBlank() -> {
-                    if (!isValidPhone(phone)) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
-                    else User(firstName, lastName, phone)
+                    if (!isValidPhone(
+                            phone
+                        )
+                    ) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
+                    else User(
+                        firstName,
+                        lastName,
+                        phone
+                    )
                 }
-                !email.isNullOrBlank() && !password.isNullOrBlank() -> User(firstName, lastName, email, password)
+                !email.isNullOrBlank() && !password.isNullOrBlank() -> User(
+                    firstName,
+                    lastName,
+                    email,
+                    password
+                )
                 else -> throw IllegalArgumentException("Email or phone must not be null or blank")
             }
         }

@@ -1,4 +1,4 @@
-package ru.skillbranch.kotlinexemple
+package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
 import java.lang.IllegalArgumentException
@@ -11,7 +11,11 @@ object UserHolder {
         email: String,
         password: String
     ): User {
-        return User.makeUser(fullName, email = email, password = password)
+        return User.makeUser(
+            fullName,
+            email = email,
+            password = password
+        )
             .also { user ->
                 map[user.login]
                     ?.let { throw IllegalArgumentException("A user with this email already exists") }
@@ -23,7 +27,10 @@ object UserHolder {
         fullName: String,
         rawPhone: String
     ): User {
-        return User.makeUser(fullName, phone = rawPhone)
+        return User.makeUser(
+            fullName,
+            phone = rawPhone
+        )
             .also { user ->
                 map[user.login]
                     ?.let { throw IllegalArgumentException("A user with this phone already exists") }
@@ -32,7 +39,10 @@ object UserHolder {
     }
 
     fun loginUser(login: String, password: String): String? {
-        val loginKey = if (User.isValidPhone(login)) {
+        val loginKey = if (User.isValidPhone(
+                login
+            )
+        ) {
             login.normalizePhone()
         } else {
             login.trim()
@@ -44,7 +54,10 @@ object UserHolder {
     }
 
     fun requestAccessCode(login: String) {
-        val loginKey = if (User.isValidPhone(login)) {
+        val loginKey = if (User.isValidPhone(
+                login
+            )
+        ) {
             login.normalizePhone()
         } else {
             login.trim()
