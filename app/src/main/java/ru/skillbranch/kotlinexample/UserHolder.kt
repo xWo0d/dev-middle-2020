@@ -39,10 +39,7 @@ object UserHolder {
     }
 
     fun loginUser(login: String, password: String): String? {
-        val loginKey = if (User.isValidPhone(
-                login
-            )
-        ) {
+        val loginKey = if (User.isValidPhone(login)) {
             login.normalizePhone()
         } else {
             login.trim()
@@ -54,10 +51,7 @@ object UserHolder {
     }
 
     fun requestAccessCode(login: String) {
-        val loginKey = if (User.isValidPhone(
-                login
-            )
-        ) {
+        val loginKey = if (User.isValidPhone(login)) {
             login.normalizePhone()
         } else {
             login.trim()
@@ -65,6 +59,35 @@ object UserHolder {
 
         map[loginKey]?.let { it.generateAndSendAccessCode(login) }
     }
+
+    //Реализуй метод importUsers(list: List): List, в качестве аргумента принимает список строк где
+    // разделителем полей является ";" данные перечислены в следующем порядке - Полное имя
+    // пользователя; email; соль:хеш пароля; телефон (
+    // Пример:
+    // " John Doe ;JohnDoe@unknow.com;[B@7591083d:c6adb4becdc64e92857e1e2a0fd6af84;;"
+    // ) метод должен вернуть коллекцию список User (Пример возвращаемого userInfo:
+    //firstName: John
+    //lastName: Doe
+    //login: johndoe@unknow.com
+    //fullName: John Doe
+    //initials: J D
+    //email: JohnDoe@unknow.com
+    //phone: null
+    //meta: {src=csv}
+    //), при этом meta должно содержать "src" : "csv", если сзначение в csv строке пустое то
+    // соответствующее свойство в объекте User должно быть null, обратите внимание что salt и hash
+    // пароля в csv разделены ":" , после импорта пользователей вызов метода loginUser должен
+    // отрабатывать корректно (достаточно по логину паролю)
+    fun importUsers(list: List<String>): List<User> = list
+        .map { it.split(";") }
+        .map { it.map(String::trim) }
+        .map { User.makeUser(it) }
+        .map { user ->
+            map[user.login]
+                ?.let { throw IllegalArgumentException("A user with this login already exists") }
+                ?: let { map[user.login] = user }
+            user
+        }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     fun clearHolder() = map.clear()

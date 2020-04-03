@@ -4,6 +4,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Test
 import ru.skillbranch.kotlinexample.UserHolder
+import ru.skillbranch.kotlinexample.extensions.dropLastUntil
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -185,4 +186,55 @@ class ExampleUnitTest {
         Assert.assertNotEquals(oldAccess, user.accessCode!!)
         Assert.assertEquals(expectedInfo, successResult)
     }
+
+    @Test
+    fun import_users() {
+        val holder = UserHolder
+
+        val csv = listOf(
+            " John Doe ;JohnDoe@unknow.com;[B@7591083d:7502db5e002b845a8ae6b451ed690629;;",
+            "Chack Norris;;LB@4568973k:e465e234adbd9ec15b1bfae84a7db911;+7(920)921-21-21;"
+        )
+
+        holder.importUsers(csv)
+
+        val expectedUser1Info = """
+            firstName: John
+            lastName: Doe
+            login: johndoe@unknow.com
+            fullName: John Doe
+            initials: J D
+            email: JohnDoe@unknow.com
+            phone: null
+            meta: {src=csv}
+        """.trimIndent()
+
+        val expectedUser2Info = """
+            firstName: Chack
+            lastName: Norris
+            login: +79209212121
+            fullName: Chack Norris
+            initials: C N
+            email: null
+            phone: +79209212121
+            meta: {src=csv}
+        """.trimIndent()
+
+        Assert.assertEquals(expectedUser1Info, holder.loginUser("johndoe@unknow.com", "123456"))
+        Assert.assertEquals(expectedUser2Info, holder.loginUser("+79209212121", "qwerty"))
+    }
+
+    @Test
+    fun drop_last_until() {
+        val ints = (1..10).toList()
+        val emptyInts = listOf<Int>()
+
+        Assert.assertEquals(emptyInts.dropLastUntil { it > 5 }, emptyList<Int>())
+
+        val res = ints.dropLastUntil { it == 5 }
+        Assert.assertTrue(res.size == 4)
+        Assert.assertEquals(res, (1..4).toList())
+    }
+
+
 }

@@ -12,11 +12,12 @@ class User private constructor(
     private var lastName: String?,
     email: String? = null,
     rawPhone: String? = null,
-    meta: Map<String, Any>? = null
+    meta: Map<String, Any>? = null,
+    salt: String? = null
 ) {
     val userInfo: String
 
-    private val  fullName: String
+    private val fullName: String
         get() = listOfNotNull(firstName, lastName)
             .joinToString(" ")
             .capitalize()
@@ -39,9 +40,7 @@ class User private constructor(
         }
         get() = _login!!
 
-    private val salt: String by lazy {
-        ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
-    }
+    private var _salt: String? = null
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     lateinit var passwordHash: String
@@ -62,7 +61,7 @@ class User private constructor(
         lastName: String?,
         email: String,
         password: String
-    ): this(firstName, lastName, email = email, meta = mapOf("auth" to "password")) {
+    ) : this(firstName, lastName, email = email, meta = mapOf("auth" to "password")) {
         println("Secondary mail constructor")
         passwordHash = encrypt(password)
     }
@@ -72,9 +71,21 @@ class User private constructor(
         firstName: String,
         lastName: String?,
         rawPhone: String
-    ): this(firstName, lastName, rawPhone = rawPhone, meta = mapOf("auth" to "sms")) {
+    ) : this(firstName, lastName, rawPhone = rawPhone, meta = mapOf("auth" to "sms")) {
         println("Secondary phone constructor")
         generateAndSendAccessCode(rawPhone)
+    }
+
+    // for csv
+    constructor(
+        firstName: String,
+        lastName: String?,
+        email: String?,
+        rawPhone: String?,
+        salt: String,
+        hash: String
+    ) : this(firstName, lastName, email, rawPhone = rawPhone, meta = mapOf("src" to "csv"), salt = salt) {
+        passwordHash = hash
     }
 
     private fun generateAccessCode(): String {
@@ -97,6 +108,7 @@ class User private constructor(
 
         phone = rawPhone
         login = email ?: phone!!
+        _salt = salt ?: ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
 
         userInfo = """
             firstName: $firstName
@@ -117,7 +129,7 @@ class User private constructor(
         else throw IllegalAccessException("The entered password does not match the current password")
     }
 
-    private fun encrypt(password: String) = salt.plus(password).md5() // good
+    private fun encrypt(password: String) = _salt.plus(password).md5() // good
 
     private fun String.md5(): String {
         val md = MessageDigest.getInstance("MD5")
@@ -161,16 +173,37 @@ class User private constructor(
             }
         }
 
+        fun makeUser(csv: List<String>): User {
+            check(csv.size == 5) { "Invalid csv record. Must be 5 fields or missing semicolon " +
+                    "at the end: $csv" }
+            val (firstName, lastName) = csv[0].fullNameToPair()
+            val email = csv[1].takeIf(String::isNotEmpty)
+            val (salt, hash) = csv[2].toSaltHashPair()
+            val rawPhone = csv[3].takeIf(String::isNotEmpty)
+            return User(firstName, lastName, email, rawPhone, salt, hash)
+        }
+
         private fun String.fullNameToPair(): Pair<String, String?> {
             return split(" ")
                 .filter { it.isNotBlank() }
                 .run {
-                    when(size) {
+                    when (size) {
                         1 -> first() to null
                         2 -> first() to last()
-                        else -> throw IllegalArgumentException("Fullname must contain only first name " +
-                                "and last name , current split result $this")
+                        else -> throw IllegalArgumentException(
+                            "Fullname must contain only first name " +
+                                    "and last name , current split result $this"
+                        )
                     }
+                }
+        }
+
+        private fun String.toSaltHashPair(): Pair<String, String> {
+            split(":")
+                .filter { it.isNotBlank() }
+                .run {
+                    if (size == 2) return first() to last()
+                    else throw IllegalArgumentException("Invalid salt:hash string: $this")
                 }
         }
 
