@@ -166,7 +166,4 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSearchView() {
-
-    }
 }
