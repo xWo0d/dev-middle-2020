@@ -22,6 +22,7 @@ class ArticleViewModel(private val articleId: String):
                 title = article.title,
                 category = article.category,
                 categoryIcon = article.categoryIcon,
+                author = article.author,
                 date = article.date.format()
             )
         }
@@ -80,6 +81,14 @@ class ArticleViewModel(private val articleId: String):
         repository.updateArticlePersonalInfo(
             currentState.toArticlePersonalInfo().copy(isBookmark = !currentState.isBookmark)
         )
+
+        val msg = if (currentState.isBookmark) {
+            Notify.TextMessage("Add to bookmarks")
+        } else {
+            Notify.TextMessage("Remove from bookmarks")
+        }
+
+        notify(msg)
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
@@ -102,7 +111,7 @@ class ArticleViewModel(private val articleId: String):
             Notify.TextMessage("Mark is liked")
         } else {
             Notify.ActionMessage(
-                "Don't like it anymore",
+                "Don`t like it anymore",
                 "No, still like it",
                 toggleLike
             )
@@ -127,7 +136,7 @@ data class ArticleState (
     val isLoadingContent: Boolean = true, // контент загружается
     val isLoadingReviews: Boolean = true, // отзывы загружаются
     val isLike: Boolean = false, // отмечено как Like
-    val isBookmark: Boolean = false, // в закладказ
+    val isBookmark: Boolean = false, // в закладках
     val isShowMenu: Boolean = false, // отображается меню
     val isBigText: Boolean = false, // шрифт увеличен
     val isDarkMode: Boolean = false, // темный режим
