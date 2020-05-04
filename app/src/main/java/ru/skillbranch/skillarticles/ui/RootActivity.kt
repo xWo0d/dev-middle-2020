@@ -1,7 +1,8 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.view.Menu
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.data.SearchMode
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
@@ -166,4 +166,30 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
+}
+
+
+data class SearchMode(
+    val isSearchOpen: Boolean = false,
+    val queryString: String? = null
+): Parcelable {
+
+    companion object CREATOR: Parcelable.Creator<SearchMode> {
+        override fun createFromParcel(source: Parcel?): SearchMode {
+            val isSearchOpen = source?.readBoolean() ?: false
+            val queryString = source?.readString()
+            return SearchMode(isSearchOpen, queryString)
+        }
+
+        override fun newArray(size: Int): Array<SearchMode> = emptyArray()
+    }
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        dest?.apply {
+            writeBoolean(isSearchOpen)
+            writeString(queryString)
+        }
+    }
+
+    override fun describeContents(): Int = 0
 }

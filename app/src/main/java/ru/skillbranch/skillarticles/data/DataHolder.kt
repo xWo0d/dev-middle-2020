@@ -117,31 +117,6 @@ data class AppSettings(
     val isBigText: Boolean = false
 )
 
-data class SearchMode(
-    val isSearchOpen: Boolean = false,
-    val queryString: String? = null
-): Parcelable {
-
-    companion object CREATOR: Parcelable.Creator<SearchMode> {
-        override fun createFromParcel(source: Parcel?): SearchMode {
-            val isSearchOpen = source?.readBoolean() ?: false
-            val queryString = source?.readString()
-            return SearchMode(isSearchOpen, queryString)
-        }
-
-        override fun newArray(size: Int): Array<SearchMode> = emptyArray()
-    }
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-        dest?.apply {
-            writeBoolean(isSearchOpen)
-            writeString(queryString)
-        }
-    }
-
-    override fun describeContents(): Int = 0
-}
-
 val longText: String = """
     long long text content
 """.trimIndent()
