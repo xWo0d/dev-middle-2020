@@ -30,6 +30,7 @@
         <item name="searchViewStyle">@style/SearchView</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
         <item name="android:textColorHint">@color/color_gray</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
     </style>
 
     <style name="ArticleToolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
@@ -46,9 +47,7 @@
     </style>
 
     <style name="SearchView" parent="Widget.AppCompat.SearchView.ActionBar">
-        <item name="android:inputType">text</item>
         <item name="searchHintIcon">@null</item>
-        <item name="defaultQueryHint">Search</item>
     </style>
 
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">

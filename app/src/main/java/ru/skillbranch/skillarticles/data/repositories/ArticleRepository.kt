@@ -22,8 +22,14 @@ object ArticleRepository {
 
     fun getAppSettings(): LiveData<AppSettings> = local.getAppSettings() // from preferences
 
+    fun getSearchData(): LiveData<SearchData> = local.getSearchData()
+
     fun updateSettings(appSettings: AppSettings) {
         local.updateAppSettings(appSettings)
+    }
+
+    fun updateSearchData(searchData: SearchData) {
+        local.updateSearchData(searchData)
     }
 
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {

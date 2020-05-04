@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Skill Articles</string>
+    <string name="article_search_placeholder">Search</string>
 </resources>

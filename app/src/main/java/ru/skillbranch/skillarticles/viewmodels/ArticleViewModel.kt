@@ -6,6 +6,7 @@ import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
+import ru.skillbranch.skillarticles.extensions.data.toSearchData
 import ru.skillbranch.skillarticles.extensions.format
 
 class ArticleViewModel(private val articleId: String):
@@ -50,6 +51,13 @@ class ArticleViewModel(private val articleId: String):
                 isBigText = settings.isBigText
             )
         }
+
+        subscribeOnDataSource(repository.getSearchData()) { searchData, state ->
+            state.copy(
+                isSearch = searchData.isSearch,
+                searchQuery = searchData.queryString
+            )
+        }
     }
 
     override fun getArticleContent(): LiveData<List<Any>?> {
@@ -92,11 +100,11 @@ class ArticleViewModel(private val articleId: String):
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-        TODO("Not yet implemented")
+        repository.updateSearchData(currentState.toSearchData().copy(isSearch = isSearch))
     }
 
     override fun handleSearch(query: String?) {
-        TODO("Not yet implemented")
+        repository.updateSearchData(currentState.toSearchData().copy(queryString = query))
     }
 
     override fun handleLike() {

@@ -1,9 +1,8 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -23,14 +22,11 @@ import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
 
-    companion object {
-        val KEY_SEARCH_MODE = "search_mode"
-    }
-
     private lateinit var viewModel: ArticleViewModel
 
-    private var searchView: SearchView? = null
-    private var searchMode: SearchMode? = null
+    private var isSearching = false
+    private var searchQuery: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +39,12 @@ class RootActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
         viewModel.observeState(this) {
             renderUi(it)
+
+            // restore search mode
+            if (it.isSearch) {
+                isSearching = true
+                searchQuery = it.searchQuery
+            }
         }
         viewModel.observeNotifications(this) {
             renderNotification(it)
@@ -52,28 +54,43 @@ class RootActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_article, menu)
         val searchItem = menu?.findItem(R.id.action_search)
-        searchView = searchItem?.actionView as? SearchView
-        searchMode?.let {
-            if (it.isSearchOpen) searchItem?.expandActionView()
-            searchView?.setQuery(it.queryString, true)
+        val searchView = (searchItem?.actionView as? SearchView)
+        if (isSearching) {
+            searchItem?.expandActionView()
+            searchView?.setQuery(searchQuery, false)
+            searchView?.clearFocus()
         }
+
+        searchItem?.let {
+            it.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                    viewModel.handleSearchMode(true)
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    viewModel.handleSearchMode(false)
+                    return true
+                }
+            })
+        }
+
+        searchView?.let {
+            it.queryHint = getString(R.string.article_search_placeholder)
+            it.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    viewModel.handleSearch(query)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.handleSearch(newText)
+                    return true
+                }
+            })
+        }
+
         return true
-    }
-
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(
-            KEY_SEARCH_MODE, SearchMode(
-                isSearchOpen = searchView?.isLaidOut ?: false,
-                queryString = searchView?.query.toString()
-            )
-        )
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchMode = savedInstanceState.getParcelable(KEY_SEARCH_MODE)
     }
 
     private fun renderNotification(notify: Notify) {
@@ -166,30 +183,4 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
-}
-
-
-data class SearchMode(
-    val isSearchOpen: Boolean = false,
-    val queryString: String? = null
-): Parcelable {
-
-    companion object CREATOR: Parcelable.Creator<SearchMode> {
-        override fun createFromParcel(source: Parcel?): SearchMode {
-            val isSearchOpen = source?.readBoolean() ?: false
-            val queryString = source?.readString()
-            return SearchMode(isSearchOpen, queryString)
-        }
-
-        override fun newArray(size: Int): Array<SearchMode> = emptyArray()
-    }
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-        dest?.apply {
-            writeBoolean(isSearchOpen)
-            writeString(queryString)
-        }
-    }
-
-    override fun describeContents(): Int = 0
 }

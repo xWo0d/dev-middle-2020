@@ -1,7 +1,5 @@
 package ru.skillbranch.skillarticles.data
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +16,7 @@ object LocalDataHolder {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val settings = MutableLiveData(AppSettings())
 
+    private val searchSettings = MutableLiveData<SearchData>(SearchData())
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         GlobalScope.launch {
@@ -48,12 +47,19 @@ object LocalDataHolder {
     }
 
     fun getAppSettings() = settings
+
+    fun getSearchData() = searchSettings
+
     fun updateAppSettings(appSettings: AppSettings) {
         settings.value = appSettings
     }
 
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
         articleInfo.value = info
+    }
+
+    fun updateSearchData(searchData: SearchData) {
+       searchSettings.value = searchData
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
@@ -115,6 +121,11 @@ data class ArticlePersonalInfo(
 data class AppSettings(
     val isDarkMode: Boolean = false,
     val isBigText: Boolean = false
+)
+
+data class SearchData(
+    val isSearch: Boolean = false,
+    val queryString: String? = null
 )
 
 val longText: String = """
