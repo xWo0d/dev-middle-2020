@@ -14,8 +14,11 @@ abstract class Binding {
     abstract fun restoreUi(savedState: Bundle)
 
     @Suppress("UNCHECKED_CAST")
-    fun <A, B, C, D> dependsOn(vararg fields: KProperty<*>, onChange: (A, B, C, D) -> Unit) {
-        check(fields.size == 4) { "Names size must be 4, current ${fields.size}" }
+    fun <A, B, C, D> dependsOn(
+        vararg fields: KProperty<*>,
+        onChange: (A, B, C, D) -> Unit
+    ) {
+        check(fields.size == 4) {"Names size must be 4, current ${fields.size}"}
         val names = fields.map { it.name }
 
         names.forEach {

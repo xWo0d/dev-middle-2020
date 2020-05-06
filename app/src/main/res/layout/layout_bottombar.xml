@@ -68,7 +68,7 @@
         tools:visibility="visible">
 
         <ImageView
-            android:id="@+id/bnt_search_close"
+            android:id="@+id/btn_search_close"
             style="@style/BottombarSearchIcon"
             android:src="@drawable/ic_close_black_24dp"
             tools:tint="@android:color/white" />
@@ -89,13 +89,13 @@
             android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/bnt_result_down"
+            android:id="@+id/btn_result_down"
             style="@style/BottombarSearchIcon"
             android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
             tools:tint="@android:color/white" />
 
         <ImageView
-            android:id="@+id/bnt_result_up"
+            android:id="@+id/btn_result_up"
             style="@style/BottombarSearchIcon"
             android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
             tools:tint="@android:color/white" />

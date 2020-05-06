@@ -195,21 +195,21 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
 
 
-        bnt_result_up.setOnClickListener {
+        btn_result_up.setOnClickListener {
             if (searchView?.hasFocus() == true) {
                 searchView?.clearFocus()
                 viewModel.handleUpResult()
             }
         }
 
-        bnt_result_down.setOnClickListener {
+        btn_result_down.setOnClickListener {
             if (searchView?.hasFocus() == true) {
                 searchView?.clearFocus()
                 viewModel.handleDownResult()
             }
         }
 
-        bnt_search_close.setOnClickListener {
+        btn_search_close.setOnClickListener {
             viewModel.handleSearchMode(false)
             invalidateOptionsMenu()
         }
@@ -293,7 +293,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                     clearSearchResult()
                 }
 
-                bottombar.bindSearchCount(sr.size, sp)
+//                bottombar.bindSearchCount(sr.size, sp)
             }
         }
 
