@@ -47,7 +47,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Group
-        android:id="@+id/bottom"
+        android:id="@+id/group_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="btn_bookmark, btn_like, btn_settings, btn_share"
@@ -68,7 +68,7 @@
         tools:visibility="visible">
 
         <ImageView
-            android:id="@+id/bnt_search_clos"
+            android:id="@+id/bnt_search_close"
             style="@style/BottombarSearchIcon"
             android:src="@drawable/ic_close_black_24dp"
             tools:tint="@android:color/white" />

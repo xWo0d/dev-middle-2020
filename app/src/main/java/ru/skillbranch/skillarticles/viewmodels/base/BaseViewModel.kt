@@ -1,10 +1,12 @@
-package ru.skillbranch.skillarticles.viewmodels
+package ru.skillbranch.skillarticles.viewmodels.base
 
+import android.os.Bundle
 import androidx.annotation.UiThread
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
+import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 
-abstract class BaseViewModel<T> (initState: T) : ViewModel() {
+abstract class BaseViewModel<T : IViewModelState>(initState: T) : ViewModel() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     val notifications = MutableLiveData<Event<Notify>>()
@@ -41,11 +43,15 @@ abstract class BaseViewModel<T> (initState: T) : ViewModel() {
      * если сообщение еще не было обработано, реализует данное поведение благодаря EventObserver
      */
     fun observeNotifications(owner: LifecycleOwner, onNotify: (notofocation: Notify) -> Unit) {
-        notifications.observe(owner, EventObserver { onNotify(it) })
+        notifications.observe(owner,
+            EventObserver {
+                onNotify(it)
+            })
     }
 
     protected fun notify(content: Notify) {
-        notifications.value = Event(content)
+        notifications.value =
+            Event(content)
     }
 
     /**
@@ -62,15 +68,15 @@ abstract class BaseViewModel<T> (initState: T) : ViewModel() {
         }
     }
 
-}
-
-class ViewModelFactory(private val params: String) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ArticleViewModel::class.java)) {
-            return ArticleViewModel(params) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    fun saveState(outState: Bundle) {
+        currentState.save(outState)
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun restoreState(savedState: Bundle) {
+        state.value = currentState.restore(savedState) as T
+    }
+
 }
 
 class Event<out E>(private val content: E) {
@@ -88,7 +94,7 @@ class Event<out E>(private val content: E) {
 
 }
 
-class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit): Observer<Event<E>> {
+class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
 
     // в качестве аргумента принимает лямбду, в которую передается необработанное ранее событие,
     // получаемое в реализации метода Observer'а onChange
@@ -102,19 +108,18 @@ class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit): Observ
 
 sealed class Notify(val message: String) {
 
-    data class TextMessage(val msg: String): Notify(msg)
+    data class TextMessage(val msg: String) : Notify(msg)
 
     data class ActionMessage(
         val msg: String,
         val actionLabel: String,
         val actionHandler: (() -> Unit)?
-    ): Notify(msg)
+    ) : Notify(msg)
 
     data class ErrorMessage(
         val msg: String,
         val errorLabel: String,
         val errHandler: (() -> Unit)?
-    ): Notify(msg)
-
+    ) : Notify(msg)
 
 }
