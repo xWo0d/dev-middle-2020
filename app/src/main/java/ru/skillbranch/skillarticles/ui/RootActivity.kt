@@ -269,7 +269,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             if (it) showSearchBar() else hideSearchBar()
         }
 
-        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList())
+        private var searchResults: List<Pair<Int, Int>> by ObserveProp(listOf<Pair<Int, Int>>())
         private var searchPosition: Int by ObserveProp(0)
 
         private var content: String by ObserveProp("loading") {
