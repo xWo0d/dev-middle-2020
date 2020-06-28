@@ -194,14 +194,14 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
 
         btn_result_up.setOnClickListener {
-            if (searchView?.hasFocus() == true) {
+            if (searchView?.isIconified() == false) {
                 searchView?.clearFocus()
                 viewModel.handleUpResult()
             }
         }
 
         btn_result_down.setOnClickListener {
-            if (searchView?.hasFocus() == true) {
+            if (searchView?.isIconified == false) {
                 searchView?.clearFocus()
                 viewModel.handleDownResult()
             }
