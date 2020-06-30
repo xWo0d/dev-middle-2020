@@ -2,6 +2,8 @@ package ru.skillbranch.skillarticles.extensions
 
 fun String?.indexesOf(substr: String, ignoreCase: Boolean = true): List<Int> {
     this ?: return listOf()
+    if (substr.isEmpty()) return listOf()
+
     val res = mutableListOf<Int>()
     var si = 0
     while (true) {

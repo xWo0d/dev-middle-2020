@@ -108,7 +108,7 @@ class ArticleViewModel(private val articleId: String):
             ?.let { (currentState.content.firstOrNull() as? String).indexesOf(it)
             .map { index -> index to index + it.length } }
             ?: emptyList()
-        updateState { it.copy(searchQuery = query, searchResult = result) }
+        updateState { it.copy(searchQuery = query, searchResults = result) }
     }
 
     override fun handleLike() {
@@ -162,7 +162,7 @@ data class ArticleState (
     val isDarkMode: Boolean = false, // темный режим
     val isSearch: Boolean = false, // режим поиска
     val searchQuery: String? = null, // поисковый запрос
-    val searchResult: List<Pair<Int, Int>> = emptyList(), // результаты поиска ()стартовая и конечная позиции
+    val searchResults: List<Pair<Int, Int>> = emptyList(), // результаты поиска ()стартовая и конечная позиции
     val searchPosition: Int = 0, // текущая позиция найденного результата
     val shareLink: String? = null, // ссылка Share
     val title: String? = null, // заголовок статьи
@@ -179,7 +179,7 @@ data class ArticleState (
             bundleOf(
                 "isSearch" to isSearch,
                 "searchQuery" to searchQuery,
-                "searchResult" to searchResult,
+                "searchResult" to searchResults,
                 "searchPosition" to searchPosition
             )
         )
@@ -189,7 +189,7 @@ data class ArticleState (
         return copy(
             isSearch = savedState["isSearch"] as Boolean,
             searchQuery = savedState["searchQuery"] as? String,
-            searchResult = savedState["searchResult"] as List<Pair<Int, Int>>,
+            searchResults = savedState["searchResult"] as List<Pair<Int, Int>>,
             searchPosition = savedState["searchPosition"] as Int
         )
     }

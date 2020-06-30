@@ -42,8 +42,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override val binding: ArticleBinding by lazy { ArticleBinding() }
 
-    private val bgColor by AttrValue(R.attr.colorSecondary)
-    private val fgColor by AttrValue(R.attr.colorOnSecondary)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val bgColor by AttrValue(R.attr.colorSecondary)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val fgColor by AttrValue(R.attr.colorOnSecondary)
 
     private var searchView: SearchView? = null
 
@@ -313,7 +317,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             isSearch = data.isSearch
             searchQuery = data.searchQuery
             searchPosition = data.searchPosition
-            searchResults = data.searchResult
+            searchResults = data.searchResults
         }
 
         override fun saveUi(outState: Bundle) {
