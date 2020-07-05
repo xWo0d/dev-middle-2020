@@ -198,17 +198,15 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
 
         btn_result_up.setOnClickListener {
-            if (searchView?.isIconified() == false) {
-                searchView?.clearFocus()
-                viewModel.handleUpResult()
-            }
+            if (searchView?.hasFocus() == true) searchView?.clearFocus()
+            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
+            viewModel.handleUpResult()
         }
 
         btn_result_down.setOnClickListener {
-            if (searchView?.isIconified == false) {
-                searchView?.clearFocus()
-                viewModel.handleDownResult()
-            }
+            if (searchView?.hasFocus() == true) searchView?.clearFocus()
+            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
+            viewModel.handleDownResult()
         }
 
         btn_search_close.setOnClickListener {
