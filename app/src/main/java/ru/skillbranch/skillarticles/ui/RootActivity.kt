@@ -309,7 +309,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             data.title?.let { title = it }
             data.category?.let { category = it }
             data.categoryIcon?.let { categoryIcon = it as Int }
-            data.content.takeIf { !it.isNullOrEmpty() }?.let { content = it }
+            data.content?.let { content = it }
 
             isLoadingContent = data.isLoadingContent
             isSearch = data.isSearch
