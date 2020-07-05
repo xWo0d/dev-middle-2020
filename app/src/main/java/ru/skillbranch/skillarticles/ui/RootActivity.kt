@@ -49,7 +49,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val fgColor by AttrValue(R.attr.colorOnSecondary)
 
-    private var searchView: SearchView? = null
+    private lateinit var searchView: SearchView
 
     override fun setupViews() {
         setupToolbar()
@@ -115,19 +115,19 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_article, menu)
         val searchItem = menu?.findItem(R.id.action_search)
-        searchView = searchItem?.actionView as? SearchView
-        searchView?.queryHint = getString(R.string.article_search_placeholder)
+        searchView = searchItem?.actionView as SearchView
+        searchView.queryHint = getString(R.string.article_search_placeholder)
 
         // restore search view
         if (binding.isSearch) {
-            searchItem?.expandActionView()
-            searchView?.setQuery(binding.searchQuery, false)
+            searchItem.expandActionView()
+            searchView.setQuery(binding.searchQuery, false)
 
-            if (binding.isFocusedSearch) searchView?.requestFocus()
-            else searchView?.clearFocus()
+            if (binding.isFocusedSearch) searchView.requestFocus()
+            else searchView.clearFocus()
         }
 
-        searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 viewModel.handleSearchMode(true)
                 return true
@@ -139,7 +139,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             }
         })
 
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
                 return true
@@ -198,13 +198,13 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
 
         btn_result_up.setOnClickListener {
-            if (searchView?.hasFocus() == true) searchView?.clearFocus()
+            if (searchView.hasFocus()) searchView.clearFocus()
             if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
             viewModel.handleUpResult()
         }
 
         btn_result_down.setOnClickListener {
-            if (searchView?.hasFocus() == true) searchView?.clearFocus()
+            if (searchView.hasFocus()) searchView.clearFocus()
             if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
             viewModel.handleDownResult()
         }
@@ -319,7 +319,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
 
         override fun saveUi(outState: Bundle) {
-            outState.putBoolean(::isFocusedSearch.name, searchView?.hasFocus() ?: false)
+            outState.putBoolean(::isFocusedSearch.name, searchView.hasFocus())
         }
 
         override fun restoreUi(savedState: Bundle) {
