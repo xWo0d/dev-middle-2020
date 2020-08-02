@@ -171,11 +171,11 @@ object MarkdownParser {
                     lastStartIndex = endIndex
                 }
             }
+        }
 
-            if (lastStartIndex < string.length) {
-                val text = string.subSequence(lastStartIndex, string.length)
-                parents.add(Element.Text(text))
-            }
+        if (lastStartIndex < string.length) {
+            val text = string.subSequence(lastStartIndex, string.length)
+            parents.add(Element.Text(text))
         }
 
         return parents
@@ -239,4 +239,18 @@ sealed class Element {
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
     ) : Element()
+
+    data class OrderedListItem(
+        val order: String,
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ): Element()
+
+    data class BlockCode(
+        val type: Type = Type.MIDDLE,
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ): Element() {
+        enum class Type { START, END, MIDDLE, SINGLE }
+    }
 }
