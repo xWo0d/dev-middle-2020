@@ -10,6 +10,7 @@ import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
+import ru.skillbranch.skillarticles.markdown.MarkdownParser
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -18,6 +19,8 @@ class ArticleViewModel(private val articleId: String):
     BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
 
     private val repository = ArticleRepository
+
+    private var clearContent: String? = null
 
     init {
         // subscribe on mutable data
@@ -104,7 +107,8 @@ class ArticleViewModel(private val articleId: String):
 
     override fun handleSearch(query: String?) {
         query ?: return
-        val result = currentState.content
+        if (clearContent == null) clearContent = MarkdownParser.clear(currentState.content)
+        val result = clearContent
             .indexesOf(query)
             .map { index -> index to index + query.length }
         updateState { it.copy(searchQuery = query, searchResults = result, searchPosition = 0) }
