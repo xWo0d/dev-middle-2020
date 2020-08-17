@@ -16,10 +16,11 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[_*-]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
+    private const val ORDERED_LIST_ITEM_GROUP = "(^[0-9].*\\. .+$)"
 
     // result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP|$ORDERED_LIST_ITEM_GROUP"
 
     private val elementPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -60,7 +61,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // groups range for iterate by groups
-            val groups = 1..9
+            val groups = 1..10
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -170,6 +171,19 @@ object MarkdownParser {
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
+
+                // ORDERED LIST
+                10 -> {
+                    text = string.subSequence(startIndex.plus(3), endIndex)
+
+                    // find inner elements
+                    val subelements = findElements(text)
+                    val element = Element.OrderedListItem(text, subelements)
+                    parents.add(element)
+
+                    // next find start from position "endIndex" (last regex character)
+                    lastStartIndex = endIndex
+                }
             }
         }
 
@@ -241,7 +255,6 @@ sealed class Element {
     ) : Element()
 
     data class OrderedListItem(
-        val order: String,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
     ): Element()

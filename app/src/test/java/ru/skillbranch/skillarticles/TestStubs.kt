@@ -13,6 +13,22 @@ val expectedUnorderedList: List<String> = listOf(
     "Or pluses"
 )
 
+val orderedListString: String = """
+before simple text
+1. First element
+2. Second element
+3. Third element
+ 1. invalid element cause space at start
+ 2 invalid element cause does not have dot
+ 3 . invalid element cause space between number and dot
+after simple text
+""".trimIndent()
+val expectedOrderedList: List<String> = listOf(
+    "First element",
+    "Second element",
+    "Third element"
+)
+
 val headerString = """
 before simple text
 # Header1

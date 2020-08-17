@@ -138,6 +138,17 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun parse_ordered_list_item() {
+        val result = MarkdownParser.parse(orderedListString)
+        val actual = prepare<Element.OrderedListItem>(result.elements)
+        assertEquals(expectedOrderedList, actual)
+
+        printResults(actual)
+        println("")
+        printElements(result.elements)
+    }
+
+    @Test
     fun parse_all() {
         val result = MarkdownParser.parse(markdownString)
         val actualUnorderedList = prepare<Element.UnorderedListItem>(result.elements)
