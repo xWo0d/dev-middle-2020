@@ -174,11 +174,12 @@ object MarkdownParser {
 
                 // ORDERED LIST
                 10 -> {
-                    text = string.subSequence(startIndex.plus(3), endIndex)
+                    val text = string.subSequence(startIndex, endIndex)
+                    val (order, itemText) = "^([0-9]*)\\. (.*)".toRegex().find(text)!!.destructured
 
                     // find inner elements
-                    val subelements = findElements(text)
-                    val element = Element.OrderedListItem(text, subelements)
+                    val subelements = findElements(itemText)
+                    val element = Element.OrderedListItem(order, itemText, subelements)
                     parents.add(element)
 
                     // next find start from position "endIndex" (last regex character)
@@ -255,6 +256,7 @@ sealed class Element {
     ) : Element()
 
     data class OrderedListItem(
+        val order: String,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
     ): Element()
