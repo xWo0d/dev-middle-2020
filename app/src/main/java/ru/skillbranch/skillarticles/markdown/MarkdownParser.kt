@@ -17,10 +17,12 @@ object MarkdownParser {
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
     private const val ORDERED_LIST_ITEM_GROUP = "(^[0-9].*\\. .+$)"
+    private val CODE_BLOCK_GROUP = "(^`{3}(.|$LINE_SEPARATOR)*?`{3}$)"
 
     // result regex
-    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP|$ORDERED_LIST_ITEM_GROUP"
+    private val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
+            "|$ORDERED_LIST_ITEM_GROUP|$CODE_BLOCK_GROUP"
 
     private val elementPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -61,7 +63,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // groups range for iterate by groups
-            val groups = 1..10
+            val groups = 1..11
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -180,6 +182,19 @@ object MarkdownParser {
                     // find inner elements
                     val subelements = findElements(itemText)
                     val element = Element.OrderedListItem(order, itemText, subelements)
+                    parents.add(element)
+
+                    // next find start from position "endIndex" (last regex character)
+                    lastStartIndex = endIndex
+                }
+
+                // CODE BLOCK
+                11 -> {
+                    val text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
+
+                    // find inner elements
+                    val subelements = findElements(text)
+                    val element = Element.BlockCode(Element.BlockCode.Type.MIDDLE, text, subelements)
                     parents.add(element)
 
                     // next find start from position "endIndex" (last regex character)

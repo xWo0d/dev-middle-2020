@@ -84,6 +84,23 @@ val expectedStrike: List<String> = listOf(
     "Scratch this."
 )
 
+val codeBlockString: String = """
+    ```code block1
+    code block2
+    code block3```
+
+    before ```code block
+    code block
+    code block```
+
+    ```code block
+    code block
+    code block``` after
+""".trimIndent()
+
+val expectedCodeBlock: String = "code block1\ncode block2\ncode block3"
+
+
 val combineEmphasisString = """
 Combined emphasis with **asterisks and _underscores_**.
 or emphasis with __underscores and *asterisks*__.

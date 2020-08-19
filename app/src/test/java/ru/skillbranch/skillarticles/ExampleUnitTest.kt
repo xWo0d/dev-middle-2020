@@ -83,6 +83,17 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun parse_code_block() {
+        val result = MarkdownParser.parse(codeBlockString)
+        val actual = prepare<Element.BlockCode>(result.elements)
+        assertEquals(expectedCodeBlock, actual.joinToString("\n"))
+
+        printResults(actual)
+        println("")
+        printElements(result.elements)
+    }
+
+    @Test
     fun parse_combine() {
         val result = MarkdownParser.parse(combineEmphasisString)
         val actualItalic = prepare<Element.Italic>(result.elements)
@@ -208,7 +219,7 @@ class ExampleUnitTest {
             .filterIsInstance<Element.Link>()
             .map { it.link }
 //        val actualBlockCode = prepare<Element.BlockCode>(result.elements) //optionally
-//        val actualOrderedList = prepare<Element.OrderedListItem>(result.elements) //optionally
+        val actualOrderedList = prepare<Element.OrderedListItem>(result.elements) //optionally
 
         assertEquals(expectedMarkdown["unorderedList"], actualUnorderedList)
         assertEquals(expectedMarkdown["header"], actualHeaders)
@@ -221,7 +232,7 @@ class ExampleUnitTest {
         assertEquals(expectedMarkdown["linkTitles"], actualLinkTitles)
         assertEquals(expectedMarkdown["links"], actualLinks)
 //        assertEquals(expectedMarkdown["multiline"], actualBlockCode) //optionally
-//        assertEquals(expectedMarkdown["orderedList"], actualOrderedList) //optionally
+        assertEquals(expectedMarkdown["orderedList"], actualOrderedList) //optionally
     }
 
     private fun printResults(strings: List<String>) {
