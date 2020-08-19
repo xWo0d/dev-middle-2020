@@ -85,10 +85,15 @@ class ExampleUnitTest {
     @Test
     fun parse_code_block() {
         val result = MarkdownParser.parse(codeBlockString)
-        val actual = prepare<Element.BlockCode>(result.elements)
-        assertEquals(expectedCodeBlock, actual.joinToString("\n"))
+        val actualStrings = prepare<Element.BlockCode>(result.elements)
+        val actualTypes = result.elements
+            .filterIsInstance(Element.BlockCode::class.java)
+            .map { it.type.toString() }
 
-        printResults(actual)
+        assertEquals(expectedCodeBlockStrings, actualStrings)
+        assertEquals(expectedCodeBlockTypes, actualTypes)
+
+        printResults(actualStrings)
         println("")
         printElements(result.elements)
     }

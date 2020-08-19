@@ -17,7 +17,7 @@ object MarkdownParser {
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
     private const val ORDERED_LIST_ITEM_GROUP = "(^[0-9].*\\. .+$)"
-    private val CODE_BLOCK_GROUP = "(^`{3}(.|$LINE_SEPARATOR)*?`{3}$)"
+    private val CODE_BLOCK_GROUP = "(^`{3}(.|$LINE_SEPARATOR)+?`{3}$)"
 
     // result regex
     private val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
@@ -50,7 +50,7 @@ object MarkdownParser {
         val matcher = elementPattern.matcher(string)
         var lastStartIndex = 0
 
-        loop@while (matcher.find(lastStartIndex)) {
+        loop@ while (matcher.find(lastStartIndex)) {
             val startIndex = matcher.start()
             val endIndex = matcher.end()
 
@@ -168,7 +168,8 @@ object MarkdownParser {
                 // LINK
                 9 -> {
                     val text = string.subSequence(startIndex, endIndex)
-                    val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex().find(text)!!.destructured
+                    val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex()
+                        .find(text)!!.destructured
                     val element = Element.Link(link, title)
                     parents.add(element)
                     lastStartIndex = endIndex
@@ -190,12 +191,24 @@ object MarkdownParser {
 
                 // CODE BLOCK
                 11 -> {
-                    val text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
+                    val lines = string.subSequence(startIndex.plus(3), endIndex.minus(3))
+                        .split(LINE_SEPARATOR)
 
-                    // find inner elements
-                    val subelements = findElements(text)
-                    val element = Element.BlockCode(Element.BlockCode.Type.MIDDLE, text, subelements)
-                    parents.add(element)
+                    if (lines.size == 1) parents.add(
+                        Element.BlockCode(
+                            Element.BlockCode.Type.SINGLE,
+                            lines.first()
+                        )
+                    )
+                    else lines.forEachIndexed { index, l ->
+                        parents.add(
+                            when (index) {
+                                0 -> Element.BlockCode(Element.BlockCode.Type.START, l)
+                                lines.lastIndex -> Element.BlockCode(Element.BlockCode.Type.END, l)
+                                else -> Element.BlockCode(Element.BlockCode.Type.MIDDLE, l)
+                            }
+                        )
+                    }
 
                     // next find start from position "endIndex" (last regex character)
                     lastStartIndex = endIndex
@@ -221,43 +234,43 @@ sealed class Element {
     data class Text(
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class UnorderedListItem(
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class Header(
         val level: Int = 1,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class Quote(
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class Italic(
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class Bold(
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class Strike(
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class Rule(
         override val text: CharSequence = " ", // for insert span
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class InlineCode(
         override val text: CharSequence,
@@ -274,13 +287,13 @@ sealed class Element {
         val order: String,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element()
+    ) : Element()
 
     data class BlockCode(
         val type: Type = Type.MIDDLE,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ): Element() {
+    ) : Element() {
         enum class Type { START, END, MIDDLE, SINGLE }
     }
 }

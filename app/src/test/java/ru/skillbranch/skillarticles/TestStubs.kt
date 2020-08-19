@@ -98,7 +98,8 @@ val codeBlockString: String = """
     code block``` after
 """.trimIndent()
 
-val expectedCodeBlock: String = "code block1\ncode block2\ncode block3"
+val expectedCodeBlockStrings: List<String> = listOf("code block1", "code block2", "code block3")
+val expectedCodeBlockTypes: List<String> = listOf("START", "MIDDLE", "END")
 
 
 val combineEmphasisString = """
