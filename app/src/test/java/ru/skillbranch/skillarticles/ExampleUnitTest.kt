@@ -200,11 +200,11 @@ class ExampleUnitTest {
 
     //optionally (delete @Ignore fo run)
 //    @Ignore
-    @Test
-    fun clear_all_with_optionally() {
-        val result = MarkdownParser.clear(markdownString)
-        assertEquals(markdownOptionallyClearString,  result)
-    }
+//    @Test
+//    fun clear_all_with_optionally() {
+//        val result = MarkdownParser.clear(markdownString)
+//        assertEquals(markdownOptionallyClearString,  result)
+//    }
 
     //optionally (delete @Ignore fo run)
 //    @Ignore

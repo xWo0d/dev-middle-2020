@@ -39,7 +39,25 @@ object MarkdownParser {
      * clear markdown text to string without markdown characters
      */
     fun clear(string: String?): String? {
-        TODO("for manual implementation")
+        return string
+            ?.let(::findElements)
+            ?.fold(StringBuilder()) { sb, e ->
+                sb.append(when (e) {
+                    is Element.OrderedListItem -> "${e.order}. ${e.text}"
+                    is Element.BlockCode -> {
+                        when (e.type) {
+                            Element.BlockCode.Type.SINGLE -> "```${e.text}```"
+                            Element.BlockCode.Type.START -> "```${e.text}\n"
+                            Element.BlockCode.Type.MIDDLE -> "${e.text}\n"
+                            Element.BlockCode.Type.END -> "${e.text}```"
+                        }
+                    }
+                    else -> {
+                        if (e.elements.isNotEmpty()) clear(e.text.toString()) else e.text
+                    }
+                })
+            }
+            ?.toString()
     }
 
     /**
