@@ -43,7 +43,7 @@ object MarkdownParser {
             ?.let(::findElements)
             ?.fold(StringBuilder()) { sb, e ->
                 sb.append(when (e) {
-                    is Element.OrderedListItem -> "${e.order}. ${e.text}"
+                    is Element.OrderedListItem -> "${e.order} ${e.text}"
                     is Element.BlockCode -> {
                         when (e.type) {
                             Element.BlockCode.Type.SINGLE -> "```${e.text}```"
@@ -196,7 +196,7 @@ object MarkdownParser {
                 // ORDERED LIST
                 10 -> {
                     val text = string.subSequence(startIndex, endIndex)
-                    val (order, itemText) = "^([0-9]*)\\. (.*)".toRegex().find(text)!!.destructured
+                    val (order, itemText) = "^([0-9]*\\.) (.*)".toRegex().find(text)!!.destructured
 
                     // find inner elements
                     val subelements = findElements(itemText)

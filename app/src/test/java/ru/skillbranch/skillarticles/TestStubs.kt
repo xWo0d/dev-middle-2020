@@ -28,6 +28,7 @@ val expectedOrderedList: List<String> = listOf(
     "Second element",
     "Third element"
 )
+val expectedOrderedListOrders = listOf("1.", "2.", "3.")
 
 val headerString = """
 before simple text

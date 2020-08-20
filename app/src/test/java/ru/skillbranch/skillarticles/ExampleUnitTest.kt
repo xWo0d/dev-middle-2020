@@ -156,10 +156,16 @@ class ExampleUnitTest {
     @Test
     fun parse_ordered_list_item() {
         val result = MarkdownParser.parse(orderedListString)
-        val actual = prepare<Element.OrderedListItem>(result.elements)
-        assertEquals(expectedOrderedList, actual)
+        val actualListStrings = prepare<Element.OrderedListItem>(result.elements)
+        val actualListOrders = result.elements
+            .filterIsInstance(Element.OrderedListItem::class.java)
+            .map { it.order }
 
-        printResults(actual)
+        assertEquals(expectedOrderedList, actualListStrings)
+        assertEquals(expectedOrderedListOrders, actualListOrders)
+
+        printResults(actualListStrings)
+        printResults(actualListOrders)
         println("")
         printElements(result.elements)
     }
