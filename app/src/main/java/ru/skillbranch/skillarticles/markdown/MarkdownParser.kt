@@ -16,8 +16,8 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[_*-]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
-    private const val ORDERED_LIST_ITEM_GROUP = "(^[0-9].*\\. .+$)"
-    private val CODE_BLOCK_GROUP = "(^`{3}(.|$LINE_SEPARATOR)+?`{3}$)"
+    private const val CODE_BLOCK_GROUP = "(^`{3}[\\s\\S]+?`{3}$)"
+    private const val ORDERED_LIST_ITEM_GROUP = "(^\\d{1,2}\\.\\s.+?$)"
 
     // result regex
     private val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
@@ -195,40 +195,48 @@ object MarkdownParser {
 
                 // ORDERED LIST
                 10 -> {
-                    val text = string.subSequence(startIndex, endIndex)
-                    val (order, itemText) = "^([0-9]*\\.) (.*)".toRegex().find(text)!!.destructured
+                    val reg = "^(\\d{1,2}.)".toRegex().find(string.substring(startIndex, endIndex))
+                    val order = reg!!.value
+                    val text = string.subSequence(startIndex.plus(order.length.inc()), endIndex).toString()
+
 
                     // find inner elements
-                    val subelements = findElements(itemText)
-                    val element = Element.OrderedListItem(order, itemText, subelements)
+                    val subs = findElements(text)
+                    val element = Element.OrderedListItem(order, text, subs)
                     parents.add(element)
 
-                    // next find start from position "endIndex" (last regex character)
                     lastStartIndex = endIndex
                 }
 
                 // CODE BLOCK
                 11 -> {
-                    val lines = string.subSequence(startIndex.plus(3), endIndex.minus(3))
-                        .split(LINE_SEPARATOR)
+                    val text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
 
-                    if (lines.size == 1) parents.add(
-                        Element.BlockCode(
-                            Element.BlockCode.Type.SINGLE,
-                            lines.first()
-                        )
-                    )
-                    else lines.forEachIndexed { index, l ->
-                        parents.add(
+                    if (text.contains(LINE_SEPARATOR)) {
+                        for ((index, line) in text.lines().withIndex()) {
                             when (index) {
-                                0 -> Element.BlockCode(Element.BlockCode.Type.START, l)
-                                lines.lastIndex -> Element.BlockCode(Element.BlockCode.Type.END, l)
-                                else -> Element.BlockCode(Element.BlockCode.Type.MIDDLE, l)
+                                text.lines().lastIndex -> parents.add(
+                                    Element.BlockCode(
+                                        Element.BlockCode.Type.END,
+                                        line
+                                    )
+                                )
+                                0 -> parents.add(
+                                    Element.BlockCode(
+                                        Element.BlockCode.Type.START,
+                                        line + LINE_SEPARATOR
+                                    )
+                                )
+                                else -> parents.add(
+                                    Element.BlockCode(
+                                        Element.BlockCode.Type.MIDDLE,
+                                        line + LINE_SEPARATOR
+                                    )
+                                )
                             }
-                        )
-                    }
+                        }
+                    } else parents.add(Element.BlockCode(Element.BlockCode.Type.SINGLE, text))
 
-                    // next find start from position "endIndex" (last regex character)
                     lastStartIndex = endIndex
                 }
             }

@@ -31,32 +31,29 @@ class BlockCodeSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
-        when (type) {
-            Element.BlockCode.Type.SINGLE -> {
-                fm?.apply {
-                    this.ascent = (this.ascent * 0.85f - 2 * padding).toInt()
-                    this.descent = (this.descent * 0.85f + 2 * padding).toInt()
+        if (fm != null) {
+            when (type) {
+                Element.BlockCode.Type.SINGLE -> {
+                    fm.ascent = (paint.ascent() - 2 * padding).toInt()
+                    fm.descent = (paint.descent() + 2 * padding).toInt()
                 }
-            }
-            Element.BlockCode.Type.START -> {
-                fm?.apply {
-                    this.descent = (this.descent - 2 * padding).toInt()
+                Element.BlockCode.Type.START -> {
+                    fm.ascent = (paint.ascent() - 2 * padding).toInt()
+                    fm.descent = paint.descent().toInt()
                 }
-            }
 
-            Element.BlockCode.Type.MIDDLE -> {
-                fm?.apply {
-                    this.ascent = (this.ascent * 0.85f).toInt()
-                    this.descent = (this.descent * 0.85f).toInt()
+                Element.BlockCode.Type.MIDDLE -> {
+                    fm.ascent = paint.ascent().toInt()
+                    fm.descent = paint.descent().toInt()
                 }
-            }
 
-            Element.BlockCode.Type.END -> {
-                fm?.apply {
-                    this.ascent = (this.ascent * 0.85f).toInt()
-                    this.descent = (this.descent * 0.85f + 2 * padding).toInt()
+                Element.BlockCode.Type.END -> {
+                    fm.ascent = paint.ascent().toInt()
+                    fm.descent = (paint.descent() + 2 * padding).toInt()
                 }
             }
+            fm.top = fm.ascent
+            fm.bottom = fm.descent
         }
         return 0
     }
@@ -75,59 +72,57 @@ class BlockCodeSpan(
             when (type) {
                 Element.BlockCode.Type.SINGLE -> {
                     paint.forBackground {
-                        rect.set(0f, top.toFloat(), canvas.width.toFloat(), bottom.toFloat())
+                        rect.set(0f, top + padding, canvas.width.toFloat(), bottom - padding)
                         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
+                    }
+                    paint.forText {
+                        canvas.drawText(text, start, end, x + padding, y.toFloat(), paint)
                     }
                 }
 
                 Element.BlockCode.Type.START -> {
                     paint.forBackground {
-                        path.reset()
-                        path.addRoundRect(
-                            RectF(0f, top + padding, canvas.width.toFloat(), bottom.toFloat()),
-                            floatArrayOf(
-                                cornerRadius, cornerRadius, // Top left radius in px
-                                cornerRadius, cornerRadius, // Top right radius in px
-                                0f, 0f, // Bottom right radius in px
-                                0f, 0f // Bottom left radius in px
-                            ),
-                            Path.Direction.CW
+                        val corners = floatArrayOf(
+                            cornerRadius, cornerRadius, // Top left radius in px
+                            cornerRadius, cornerRadius, // Top right radius in px
+                            0f, 0f, // Bottom right radius in px
+                            0f, 0f // Bottom left radius in px
                         )
+                        rect.set(0f, top + padding, canvas.width.toFloat(), bottom.toFloat())
+                        path.reset()
+                        path.addRoundRect(rect, corners, Path.Direction.CW)
                         canvas.drawPath(path, paint)
+                    }
+                    paint.forText {
+                        canvas.drawText(text, start, end, x + padding, y.toFloat(), paint)
                     }
                 }
 
                 Element.BlockCode.Type.MIDDLE -> {
                     paint.forBackground {
-                        path.reset()
-                        path.addRoundRect(
-                            RectF(0f, top.toFloat(), canvas.width.toFloat(), bottom.toFloat()),
-                            floatArrayOf(
-                                0f, 0f, // Top left radius in px
-                                0f, 0f, // Top right radius in px
-                                0f, 0f, // Bottom right radius in px
-                                0f, 0f // Bottom left radius in px
-                            ),
-                            Path.Direction.CW
-                        )
-                        canvas.drawPath(path, paint)
+                        rect.set(0f, top.toFloat(), canvas.width.toFloat(), bottom.toFloat())
+                        canvas.drawRect(rect, paint)
+                    }
+                    paint.forText {
+                        canvas.drawText(text, start, end, x + padding, y.toFloat(), paint)
                     }
                 }
 
                 Element.BlockCode.Type.END -> {
                     paint.forBackground {
-                        path.reset()
-                        path.addRoundRect(
-                            RectF(0f, top.toFloat(), canvas.width.toFloat(), bottom - padding),
-                            floatArrayOf(
-                                0f, 0f, // Top left radius in px
-                                0f, 0f, // Top right radius in px
-                                cornerRadius, cornerRadius, // Bottom right radius in px
-                                cornerRadius, cornerRadius // Bottom left radius in px
-                            ),
-                            Path.Direction.CW
+                        val corners = floatArrayOf(
+                            cornerRadius, cornerRadius, // Top left radius in px
+                            cornerRadius, cornerRadius, // Top right radius in px
+                            0f, 0f, // Bottom right radius in px
+                            0f, 0f // Bottom left radius in px
                         )
+                        rect.set(0f, top.toFloat(), canvas.width.toFloat(), bottom - padding)
+                        path.reset()
+                        path.addRoundRect(rect, corners, Path.Direction.CW)
                         canvas.drawPath(path, paint)
+                    }
+                    paint.forText {
+                        canvas.drawText(text, start, end, x + padding, y.toFloat(), paint)
                     }
                 }
             }

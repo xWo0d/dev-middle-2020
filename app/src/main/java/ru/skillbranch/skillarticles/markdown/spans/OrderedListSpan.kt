@@ -29,26 +29,25 @@ class OrderedListSpan(
         lineTop: Int, lineBaseline: Int, lineBottom: Int, text: CharSequence?, lineStart: Int,
         lineEnd: Int, isFirstLine: Boolean, layout: Layout?
     ) {
-        paint.withCustomColor {
-            canvas.drawText(
-                order,
-                gapWidth,
-                lineBaseline.toFloat(),
-                paint
-            )
+        if (isFirstLine) {
+            paint.withCustomColor {
+                canvas.drawText(
+                    order,
+                    currentMarginLocation + gapWidth,
+                    lineBaseline.toFloat(),
+                    paint
+                )
+            }
         }
     }
 
     private inline fun Paint.withCustomColor(block: () -> Unit) {
         val oldColor = color
-        val oldStyle = style
 
         color = orderColor
-        style = Paint.Style.FILL
 
         block()
 
         color = oldColor
-        style = oldStyle
     }
 }
