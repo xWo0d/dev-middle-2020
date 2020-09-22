@@ -15,10 +15,10 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.dpToPx
-import ru.skillbranch.skillarticles.R
 import java.nio.charset.Charset
 import java.security.MessageDigest
 import kotlin.math.hypot
@@ -86,7 +86,7 @@ class MarkdownImageView private constructor(
         }
         addView(iv_image)
 
-        tv_title = MarkdownTextView(context).apply {
+        tv_title = MarkdownTextView(context, fontSize * 0.75f).apply {
             setText("title", TextView.BufferType.SPANNABLE)
             setTextColor(colorOnBackground)
             gravity = Gravity.CENTER
@@ -101,7 +101,7 @@ class MarkdownImageView private constructor(
         context: Context,
         fontSize: Float,
         url: String,
-        title: String,
+        title: CharSequence,
         alt: String?
     ): this(context, fontSize) {
 
