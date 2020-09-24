@@ -19,6 +19,7 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.dpToPx
+import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 import java.nio.charset.Charset
 import java.security.MessageDigest
 import kotlin.math.hypot
@@ -91,8 +92,7 @@ class MarkdownImageView private constructor(
             setTextColor(colorOnBackground)
             gravity = Gravity.CENTER
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
-            //TODO add extension
-//            setPaddingOptionally(left = titlePadding, right = titlePadding)
+            setPaddingOptionally(left = titlePadding, right = titlePadding)
         }
         addView(tv_title)
     }

@@ -5,7 +5,10 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.children
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
+import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 import kotlin.properties.Delegates
 
 class MarkdownContentView @JvmOverloads constructor(
@@ -15,7 +18,6 @@ class MarkdownContentView @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
     lateinit var elements: List<MarkdownElement>
-    private val children: MutableList<View> = mutableListOf()
 
     // for restore
     private var ids = arrayListOf<Int>()
@@ -54,7 +56,7 @@ class MarkdownContentView @JvmOverloads constructor(
                 it.layout(
                     left - paddingLeft / 2,
                     usedHeight,
-                    right - paddingRight / 2,
+                    r - paddingRight / 2,
                     usedHeight + it.measuredHeight
                 )
             } else {
@@ -75,10 +77,10 @@ class MarkdownContentView @JvmOverloads constructor(
             when (it) {
                 is MarkdownElement.Text -> {
                     val tv = MarkdownTextView(context, textSize).apply {
-//                        setPaddingOptionally(
-//                            left = context.dpToIntPx(8),
-//                            right = context.dpToIntPx(8),
-//                        )
+                        setPaddingOptionally(
+                            left = context.dpToIntPx(8),
+                            right = context.dpToIntPx(8)
+                        )
                         setLineSpacing(fontSize * 0.5f, 1f)
                     }
 

@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.ui.custom.markdown
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.text.Spannable
@@ -10,7 +11,8 @@ import androidx.core.graphics.withTranslation
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 
-class MarkdownTextView @JvmOverloads constructor(
+@SuppressLint("ViewConstructor")
+class MarkdownTextView constructor(
     context: Context,
     fontSize: Float
 ): TextView(context, null, 0), IMarkdownView {
