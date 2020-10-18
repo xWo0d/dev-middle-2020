@@ -125,8 +125,7 @@ class MarkdownImageView private constructor(
                 setBackgroundColor(ColorUtils.setAlphaComponent(colorSurface, 160))
                 gravity = Gravity.CENTER
                 textSize = fontSize
-                //TODO add extension
-//                setPadding(titleTopMargin)
+                setPaddingOptionally(top = titleTopMargin)
                 isVisible = false
             }
         }
