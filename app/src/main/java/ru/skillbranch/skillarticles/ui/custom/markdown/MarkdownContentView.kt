@@ -34,6 +34,10 @@ class MarkdownContentView @JvmOverloads constructor(
     var isLoading = true
     val padding = context.dpToIntPx(8)
 
+    init {
+        isSaveEnabled = true
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var usedHeight = paddingTop
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
@@ -100,7 +104,10 @@ class MarkdownContentView @JvmOverloads constructor(
                         it.image.url,
                         it.image.text,
                         it.image.alt
-                    )
+                    ).also { view ->
+                        view.id = ids.size
+                        ids.add(view.id)
+                    }
                     addView(iv)
                 }
 
@@ -109,7 +116,10 @@ class MarkdownContentView @JvmOverloads constructor(
                         context,
                         textSize,
                         it.blockCode.text
-                    )
+                    ).also { view ->
+                        view.id = ids.size
+                        ids.add(view.id)
+                    }
                     addView(sv)
                 }
 

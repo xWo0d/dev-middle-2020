@@ -78,6 +78,7 @@ class MarkdownImageView private constructor(
     }
 
     init {
+        isSaveEnabled = true
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP

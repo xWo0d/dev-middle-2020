@@ -86,6 +86,7 @@ class MarkdownCodeView private constructor(
         }
 
     init {
+        isSaveEnabled = true
         tv_codeView = MarkdownTextView(context, fontSize * 0.85f).apply {
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
             setTextColor(textColor)
@@ -207,13 +208,17 @@ class MarkdownCodeView private constructor(
     override fun onSaveInstanceState(): Parcelable? {
         val savedState = SavedState(super.onSaveInstanceState())
         savedState.isDark = isDark
+        savedState.isManual = isManual
         return savedState
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         super.onRestoreInstanceState(state)
-        if (state is SavedState) isDark = state.isDark
-        applyColors()
+        if (state is SavedState) {
+            isDark = state.isDark
+            isManual = state.isManual
+            applyColors()
+        }
     }
 
     private fun toggleColors() {
@@ -232,6 +237,7 @@ class MarkdownCodeView private constructor(
     private class SavedState: BaseSavedState, Parcelable {
 
         var isDark: Boolean = false
+        var isManual: Boolean = false
 
         constructor(superState: Parcelable?) : super(superState)
 
