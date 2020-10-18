@@ -35,41 +35,49 @@ class SearchBgHelper(
         null
     )
 
-    val drawable: Drawable = mockDrawable ?: GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        cornerRadii = FloatArray(8).apply { fill(radius, 0, size) }
-        color = ColorStateList.valueOf(alphaColor)
-        setStroke(borderWidth, secondaryColor)
+    val drawable: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadii = FloatArray(8).apply { fill(radius, 0, size) }
+            color = ColorStateList.valueOf(alphaColor)
+            setStroke(borderWidth, secondaryColor)
+        }
     }
 
-    val drawableLeft = mockDrawable ?: GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        cornerRadii = floatArrayOf(
-            radius, radius, // Top left radius in px
-            0f, 0f, // Top right radius in px
-            0f, 0f, // Bottom right radius in px
-            radius, radius // Bottom left radius in px
-        )
-        color = ColorStateList.valueOf(alphaColor)
-        setStroke(borderWidth, secondaryColor)
+    val drawableLeft: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadii = floatArrayOf(
+                radius, radius, // Top left radius in px
+                0f, 0f, // Top right radius in px
+                0f, 0f, // Bottom right radius in px
+                radius, radius // Bottom left radius in px
+            )
+            color = ColorStateList.valueOf(alphaColor)
+            setStroke(borderWidth, secondaryColor)
+        }
     }
 
-    val drawableMiddle = mockDrawable ?: GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        color = ColorStateList.valueOf(alphaColor)
-        setStroke(borderWidth, secondaryColor)
+    val drawableMiddle: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            color = ColorStateList.valueOf(alphaColor)
+            setStroke(borderWidth, secondaryColor)
+        }
     }
 
-    val drawableRight = mockDrawable ?: GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        cornerRadii = floatArrayOf(
-            0f, 0f, // Top left radius in px
-            radius, radius, // Top right radius in px
-            radius, radius, // Bottom right radius in px
-            0f, 0f // Bottom left radius in px
-        )
-        color = ColorStateList.valueOf(alphaColor)
-        setStroke(borderWidth, secondaryColor)
+    val drawableRight: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadii = floatArrayOf(
+                0f, 0f, // Top left radius in px
+                radius, radius, // Top right radius in px
+                radius, radius, // Bottom right radius in px
+                0f, 0f // Bottom left radius in px
+            )
+            color = ColorStateList.valueOf(alphaColor)
+            setStroke(borderWidth, secondaryColor)
+        }
     }
 
     private lateinit var render: SearchBgRender
