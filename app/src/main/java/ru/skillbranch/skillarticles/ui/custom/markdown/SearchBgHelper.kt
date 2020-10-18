@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.text.Layout
 import android.text.Spanned
+import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.ColorUtils
 import androidx.core.text.getSpans
 import ru.skillbranch.skillarticles.R
@@ -15,9 +16,11 @@ import ru.skillbranch.skillarticles.ui.custom.spans.HeaderSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class SearchBgHelper(
     context: Context,
-    private val focusListener: (Int, Int) -> Unit
+    private val focusListener: ((Int, Int) -> Unit)? = null,
+    mockDrawable: Drawable? = null //for mock drawable
 ) {
     private val padding = context.dpToIntPx(4)
     private val radius = context.dpToPx(8)
@@ -26,49 +29,47 @@ class SearchBgHelper(
     private val secondaryColor = context.attrValue(R.attr.colorSecondary)
     private val alphaColor = ColorUtils.setAlphaComponent(secondaryColor, 160)
 
-    val drawable: Drawable by lazy {
-        GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadii = FloatArray(8).apply { fill(radius, 0, size) }
-            color = ColorStateList.valueOf(alphaColor)
-            setStroke(borderWidth, secondaryColor)
-        }
+    constructor(context: Context, focusListener: (Int, Int) -> Unit) : this(
+        context,
+        focusListener,
+        null
+    )
+
+    val drawable: Drawable = mockDrawable ?: GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadii = FloatArray(8).apply { fill(radius, 0, size) }
+        color = ColorStateList.valueOf(alphaColor)
+        setStroke(borderWidth, secondaryColor)
     }
 
-    val drawableLeft: Drawable by lazy {
-        GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadii = floatArrayOf(
-                radius, radius, // Top left radius in px
-                0f, 0f, // Top right radius in px
-                0f, 0f, // Bottom right radius in px
-                radius, radius // Bottom left radius in px
-            )
-            color = ColorStateList.valueOf(alphaColor)
-            setStroke(borderWidth, secondaryColor)
-        }
+    val drawableLeft = mockDrawable ?: GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadii = floatArrayOf(
+            radius, radius, // Top left radius in px
+            0f, 0f, // Top right radius in px
+            0f, 0f, // Bottom right radius in px
+            radius, radius // Bottom left radius in px
+        )
+        color = ColorStateList.valueOf(alphaColor)
+        setStroke(borderWidth, secondaryColor)
     }
 
-    val drawableMiddle: Drawable by lazy {
-        GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            color = ColorStateList.valueOf(alphaColor)
-            setStroke(borderWidth, secondaryColor)
-        }
+    val drawableMiddle = mockDrawable ?: GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        color = ColorStateList.valueOf(alphaColor)
+        setStroke(borderWidth, secondaryColor)
     }
 
-    val drawableRight: Drawable by lazy {
-        GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadii = floatArrayOf(
-                0f, 0f, // Top left radius in px
-                radius, radius, // Top right radius in px
-                radius, radius, // Bottom right radius in px
-                0f, 0f // Bottom left radius in px
-            )
-            color = ColorStateList.valueOf(alphaColor)
-            setStroke(borderWidth, secondaryColor)
-        }
+    val drawableRight = mockDrawable ?: GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadii = floatArrayOf(
+            0f, 0f, // Top left radius in px
+            radius, radius, // Top right radius in px
+            radius, radius, // Bottom right radius in px
+            0f, 0f // Bottom left radius in px
+        )
+        color = ColorStateList.valueOf(alphaColor)
+        setStroke(borderWidth, secondaryColor)
     }
 
     private lateinit var render: SearchBgRender
@@ -107,7 +108,7 @@ class SearchBgHelper(
 
             if (it is SearchFocusSpan) {
                 // if search focus invoke listener for focus
-                focusListener.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
+                focusListener?.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
             }
 
             headerSpans = text.getSpans(spanStart, spanEnd, HeaderSpan::class.java)
@@ -129,7 +130,16 @@ class SearchBgHelper(
             endOffset = layout.getPrimaryHorizontal(spanEnd).toInt()
 
             render = if (startLine == endLine) singleLineRender else multiLineRender
-            render.draw(canvas, layout, startLine, endLine, startOffset, endOffset, topExtraPadding, bottomExtraPadding)
+            render.draw(
+                canvas,
+                layout,
+                startLine,
+                endLine,
+                startOffset,
+                endOffset,
+                topExtraPadding,
+                bottomExtraPadding
+            )
         }
 
     }
@@ -179,9 +189,9 @@ class SingleLineRender(padding: Int, val drawable: Drawable) : SearchBgRender(pa
 
 class MultiLineRender(
     padding: Int,
-    val drawableLeft: Drawable,
-    val drawableMiddle: Drawable,
-    val drawableRight: Drawable
+    private val drawableLeft: Drawable,
+    private val drawableMiddle: Drawable,
+    private val drawableRight: Drawable
 ) : SearchBgRender(padding) {
 
     private var lineTop = 0
