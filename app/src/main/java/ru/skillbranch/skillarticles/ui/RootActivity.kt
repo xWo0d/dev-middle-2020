@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
@@ -29,12 +30,18 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
+import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override val layout: Int = R.layout.activity_root
 
-    override val viewModel: ArticleViewModel by provideViewModel("0")
+    override val viewModel: ArticleViewModel by viewModels {
+        ViewModelFactory(
+            owner = this,
+            params = "0"
+        )
+    }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override val binding: ArticleBinding by lazy { ArticleBinding() }

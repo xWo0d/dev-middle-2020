@@ -1,8 +1,21 @@
 package ru.skillbranch.skillarticles.viewmodels.base
 
-import android.os.Bundle
+import androidx.lifecycle.SavedStateHandle
 
 interface IViewModelState {
-    fun save(outState: Bundle)
-    fun restore(savedState: Bundle): IViewModelState
+
+    /**
+     * override it if you need save state in Bundle
+     */
+    fun save(outState: SavedStateHandle) {
+        // default empty implementation
+    }
+
+    /**
+     * override it if you need save state in Bundle
+     */
+    fun restore(savedState: SavedStateHandle): IViewModelState {
+        // default empty implementation
+        return this
+    }
 }

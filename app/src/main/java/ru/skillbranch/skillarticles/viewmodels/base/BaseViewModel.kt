@@ -1,12 +1,13 @@
 package ru.skillbranch.skillarticles.viewmodels.base
 
-import android.os.Bundle
 import androidx.annotation.UiThread
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
-import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 
-abstract class BaseViewModel<T : IViewModelState>(initState: T) : ViewModel() {
+abstract class BaseViewModel<T : IViewModelState>(
+    private val handleState: SavedStateHandle,
+    initState: T
+) : ViewModel() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     val notifications = MutableLiveData<Event<Notify>>()
@@ -81,13 +82,11 @@ abstract class BaseViewModel<T : IViewModelState>(initState: T) : ViewModel() {
         }
     }
 
-    fun saveState(outState: Bundle) {
-        currentState.save(outState)
-    }
+    fun saveState() = currentState.save(handleState)
 
     @Suppress("UNCHECKED_CAST")
-    fun restoreState(savedState: Bundle) {
-        state.value = currentState.restore(savedState) as T
+    fun restoreState() {
+        state.value = currentState.restore(handleState) as T
     }
 
 }
