@@ -19,11 +19,11 @@ object LocalDataHolder {
             delay(1000)
             articleData.postValue(
                 ArticleData(
-                    title = "CoordinatorLayout Basic",
+                    title = "Drawing a rounded corner background on text",
                     category = "Android",
                     categoryIcon = R.drawable.logo,
                     date = Date(),
-                    author = "Skill-Branch"
+                    author = "Florina Muntenescu"
                 )
             )
         }
@@ -47,6 +47,56 @@ object LocalDataHolder {
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
         Log.e("DataHolder", "update personal info: $info")
         articleInfo.value = info
+    }
+
+    fun findArticles(): MutableLiveData<List<ArticleItemData>?> {
+        val article = ArticleItemData()
+        return MutableLiveData(
+            listOf(
+                article,
+                article.copy(
+                    id = "1",
+                    title = "Architecture Components pitfalls",
+                    description = "LiveData and the Fragment lifecycle",
+                    author = "Christophe Beyls",
+                    authorAvatar = "https://miro.medium.com/fit/c/96/96/0*zhOjC9mtKiAzmBQo.png",
+                    poster = "https://miro.medium.com/max/800/1*Cd_1M-LJ46t6xo79LfMGVw.jpeg"
+                ),
+                article.copy(
+                    id = "2",
+                    title = "Using Safe args plugin — current state of affairs",
+                    description = "Article describing usage of Safe args Gradle plugin with the Navigation Architecture Component and current support for argument types",
+                    author = "Veronika Petruskova",
+                    date = Date(1586602982217),
+                    authorAvatar = "https://miro.medium.com/fit/c/96/96/1*VSq5CqY3y1Bb4CLK83ZIuw.png",
+                    poster = "https://miro.medium.com/max/1920/1*u4uWVOpqFCR1gGpJTewhhA.jpeg"
+                ),
+                article.copy(
+                    id = "3",
+                    title = "Observe LiveData from ViewModel in Fragment",
+                    description = "Google introduced Android architecture components which are basically a collection of libraries that facilitate robust design, testable",
+                    author = "Sagar Begale",
+                    authorAvatar = "https://miro.medium.com/fit/c/96/96/2*0yEmon3hJKcxVIXjSJeR3Q.jpeg",
+                    poster = "https://miro.medium.com/max/1600/0*BDD1KysQZFMeH3pc.png"
+                ),
+                article.copy(
+                    id = "4",
+                    title = "The New Android In-App Navigation",
+                    description = "How to integrate Navigation Architecture Component in your app in different use cases",
+                    author = "Veronika Petruskova",
+                    authorAvatar = "https://miro.medium.com/fit/c/96/96/1*VSq5CqY3y1Bb4CLK83ZIuw.png",
+                    poster = "https://miro.medium.com/max/6000/0*QocVcbGZ4MeJbTCZ"
+                ),
+                article.copy(
+                    id = "5",
+                    title = "Optimizing Android ViewModel with Lifecycle 2.2.0",
+                    description = "Initialization, passing arguments, and saved state",
+                    author = "Adam Hurwitz",
+                    authorAvatar = "https://miro.medium.com/fit/c/96/96/2*0yEmon3hJKcxVIXjSJeR3Q.jpeg",
+                    poster = "https://miro.medium.com/max/4011/1*voHEHCw6ZWrWGMmZ_xtpBQ.png"
+                )
+            )
+        )
     }
 }
 
@@ -81,6 +131,21 @@ data class ArticlePersonalInfo(
 data class AppSettings(
     val isDarkMode: Boolean = false,
     val isBigText: Boolean = false
+)
+
+data class ArticleItemData(
+    val id: String = "0",
+    val date: Date = Date(),
+    val author: String = "Florina Muntenescu",
+    val authorAvatar: String = "https://miro.medium.com/fit/c/96/96/1*z2H2HkOuv5bAOuIvUUN-5w.jpeg",
+    val title: String = "Drawing a rounded corner background on text",
+    val description: String = "Let's say that we need to draw a **rounded** corner background on text...",
+    val poster: String = "https://miro.medium.com/max/4209/1*GHjguSrfS6bNSjr_rsDSJw.png",
+    val category: String = "Android",
+    val categoryIcon: String = "https://skill-branch.ru/img/mail/bot/android-category.png",
+    val likeCount: Int = 16,
+    val commentCount: Int = 2,
+    val readDuration: Int = 3
 )
 
 val longText: String = """

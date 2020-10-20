@@ -6,7 +6,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
+import ru.skillbranch.skillarticles.viewmodels.article.ArticleViewModel
 
 class ViewModelFactory(
     owner: SavedStateRegistryOwner,
@@ -20,7 +20,10 @@ class ViewModelFactory(
         handle: SavedStateHandle
     ): T {
         if (modelClass.isAssignableFrom(ArticleViewModel::class.java)) {
-            return ArticleViewModel(handle, params as String) as T
+            return ArticleViewModel(
+                handle,
+                params as String
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
