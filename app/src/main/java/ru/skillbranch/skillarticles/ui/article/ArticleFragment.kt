@@ -46,22 +46,23 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     override val layout: Int = R.layout.fragment_article
     override val binding: ArticleBinding by lazy { ArticleBinding() }
     override val prepareToolbar: (ToolbarBuilder.() -> Unit)? = {
-        setTitle(args.title)
-        setSubtitle(args.category)
-        setLogo(args.categoryIcon)
-        addMenuItem(
-            MenuItemHolder(
-                "search",
-                R.id.action_search,
-                R.drawable.ic_search_black_24dp,
-                R.layout.search_view_layout
+        this.setTitle(args.title)
+            .setSubtitle(args.category)
+            .setLogo(args.categoryIcon)
+            .addMenuItem(
+                MenuItemHolder(
+                    "search",
+                    R.id.action_search,
+                    R.drawable.ic_search_black_24dp,
+                    R.layout.search_view_layout
+                )
             )
-        )
     }
 
     override val prepareBottombar: (BottombarBuilder.() -> Unit)? = {
         this.addView(R.layout.layout_bottombar)
-        this.addView(R.layout.layout_submenu)
+            .addView(R.layout.layout_submenu)
+            .setVisibility(false)
     }
 
     private val bottombar
@@ -98,8 +99,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_title.text = args.title
         tv_author.text = args.author
         tv_date.text = args.date.format()
-
-
     }
 
     override fun showSearchBar() {

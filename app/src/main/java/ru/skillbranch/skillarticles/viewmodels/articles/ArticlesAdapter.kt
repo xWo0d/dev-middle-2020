@@ -54,7 +54,7 @@ class ArticleVH(override val containerView: View): RecyclerView.ViewHolder(conta
             .into(iv_poster)
 
         Glide.with(containerView.context)
-            .load(item.category)
+            .load(item.categoryIcon)
             .transform(CenterCrop(), RoundedCorners(cornerRadius))
             .override(categorySize)
             .into(iv_category)

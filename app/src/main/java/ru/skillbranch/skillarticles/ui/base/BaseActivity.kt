@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -15,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions.circleCropTransform
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import kotlinx.android.synthetic.main.activity_root.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
@@ -103,6 +105,7 @@ class ToolbarBuilder {
     }
 
     fun prepare(prepareFn: (ToolbarBuilder.() -> Unit)?): ToolbarBuilder {
+        invalidate()
         prepareFn?.invoke(this)
         return this
     }
@@ -110,7 +113,7 @@ class ToolbarBuilder {
     fun build(context: FragmentActivity) {
         with(context.toolbar) {
             this@ToolbarBuilder.title?.let { this.title = it }
-            this@ToolbarBuilder.subtitle?.let { this.subtitle = it }
+            this.subtitle = this@ToolbarBuilder.subtitle
             this@ToolbarBuilder.logo?.let { builderLogo ->
                 val logoSize = context.dpToIntPx(40)
                 val logoMargin = context.dpToIntPx(16)
@@ -175,7 +178,6 @@ class BottombarBuilder() {
     }
 
     fun build(context: FragmentActivity) {
-
         // remove temp views
         if (tempViews.isNotEmpty()) {
             tempViews.forEach {
@@ -197,6 +199,9 @@ class BottombarBuilder() {
 
         with(context.nav_view) {
             isVisible = visible
+            // show bottom bar if hidden due to scroll behavior
+            ((layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior)
+                .slideUp(this)
         }
     }
 }

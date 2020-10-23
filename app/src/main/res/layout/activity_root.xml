@@ -21,9 +21,7 @@
             android:elevation="4dp"
             android:theme="@style/ArticleBarsTheme"
             app:contentInsetEndWithActions="16dp"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:logo="@drawable/logo_placeholder"
-            app:subtitle="loading..."
+            app:layout_scrollFlags="scroll|enterAlways"
             app:title="@string/app_name" />
 
     </com.google.android.material.appbar.AppBarLayout>

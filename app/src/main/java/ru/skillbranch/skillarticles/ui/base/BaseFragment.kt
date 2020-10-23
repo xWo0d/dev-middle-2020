@@ -38,7 +38,6 @@ abstract class BaseFragment<T: BaseViewModel<out IViewModelState>>: Fragment() {
 
         // prepare toolbar
         root.toolbarBuilder
-            .invalidate()
             .prepare(prepareToolbar)
             .build(root)
 
