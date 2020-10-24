@@ -107,7 +107,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
-//            viewModel.handleSendComment()
+            viewModel.handleSendComment()
             val action = ArticleFragmentDirections.startLogin()
             findNavController().navigate(action)
             true

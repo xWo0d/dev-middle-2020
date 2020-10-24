@@ -13,12 +13,13 @@ import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 class ArticleViewModel(
     handle: SavedStateHandle,
     private val articleId: String
-): BaseViewModel<ArticleState>(handle, ArticleState()), IArticleViewModel {
+) : BaseViewModel<ArticleState>(handle, ArticleState()), IArticleViewModel {
 
     private val repository = ArticleRepository
 
@@ -60,6 +61,10 @@ class ArticleViewModel(
                 isDarkMode = settings.isDarkMode,
                 isBigText = settings.isBigText
             )
+        }
+
+        subscribeOnDataSource(repository.isAuth()) { isAuth, state ->
+            state.copy(isAuth = isAuth)
         }
 
     }
@@ -159,6 +164,11 @@ class ArticleViewModel(
         notify(Notify.TextMessage("Code copy to clipboard"))
     }
 
+    fun handleSendComment() {
+        if (!currentState.isAuth) navigate(NavigationCommand.StartLogin())
+        //TODO send comment
+    }
+
 }
 
 data class ArticleState(
@@ -183,7 +193,7 @@ data class ArticleState(
     val poster: String? = null, // обложка статьи
     val content: List<MarkdownElement> = emptyList(), // контент
     val reviews: List<Any> = emptyList() // комментарии
-): IViewModelState {
+) : IViewModelState {
     override fun save(outState: SavedStateHandle) {
         outState.set("isSearch", isSearch)
         outState.set("searchQuery", searchQuery)

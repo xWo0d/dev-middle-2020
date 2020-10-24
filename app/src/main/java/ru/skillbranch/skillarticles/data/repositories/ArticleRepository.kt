@@ -33,4 +33,6 @@ object ArticleRepository {
         local.updateArticlePersonalInfo(info)
     }
 
+    fun isAuth() = local.isAuth()
+
 }
