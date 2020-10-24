@@ -85,5 +85,6 @@ abstract class BaseFragment<T: BaseViewModel<out IViewModelState>>: Fragment() {
                 menuHolder.actionViewLayout?.let { item.setActionView(it) }
             }
         } else menu.clear()
+        super.onPrepareOptionsMenu(menu)
     }
 }
