@@ -61,11 +61,12 @@
         tools:layout="@layout/fragment_transcriptions" />
     <navigation
         android:id="@+id/auth"
-        app:startDestination="@id/nav_auth">
+        app:startDestination="@id/nav_auth"
+        android:label="@string/title_authorization">
         <fragment
             android:id="@+id/nav_auth"
             android:name="ru.skillbranch.skillarticles.viewmodels.auth.AuthFragment"
-            android:label="fragment_auth"
+            android:label="@string/title_authorization"
             tools:layout="@layout/fragment_auth" >
             <action
                 android:id="@+id/action_authFragment_to_privacyPolicyFragment"
@@ -78,7 +79,7 @@
         <fragment
             android:id="@+id/page_privacy_policy"
             android:name="ru.skillbranch.skillarticles.ui.auth.PrivacyPolicyFragment"
-            android:label="fragment_privacy_policy"
+            android:label="@string/title_privacy_policy"
             tools:layout="@layout/fragment_privacy_policy" />
     </navigation>
 
