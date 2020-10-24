@@ -70,6 +70,10 @@
             <action
                 android:id="@+id/action_authFragment_to_privacyPolicyFragment"
                 app:destination="@id/page_privacy_policy" />
+            <argument
+                android:name="private_destination"
+                app:argType="integer"
+                android:defaultValue="-1" />
         </fragment>
         <fragment
             android:id="@+id/page_privacy_policy"

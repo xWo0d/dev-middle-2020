@@ -13,6 +13,7 @@ object LocalDataHolder {
     private val articleData = MutableLiveData<ArticleData?>(null)
     private val articleInfo = MutableLiveData<ArticlePersonalInfo?>(null)
     private val settings = MutableLiveData(AppSettings())
+    private val authData = MutableLiveData<Boolean>(false)
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         GlobalScope.launch {
@@ -99,13 +100,9 @@ object LocalDataHolder {
         )
     }
 
-    fun isAuth(): LiveData<Boolean> {
-        TODO("Not yet implemented")
-    }
+    fun isAuth(): LiveData<Boolean> = authData
 
-    fun setAuth(auth: Boolean) {
-        TODO("Not yet implemented")
-    }
+    fun setAuth(auth: Boolean) = authData.postValue(auth)
 }
 
 object NetworkDataHolder {

@@ -57,6 +57,7 @@ abstract class BaseFragment<T: BaseViewModel<out IViewModelState>>: Fragment() {
         if (binding?.isInflated == true) binding?.onFinishInflate()
 
         viewModel.observeNotifications(viewLifecycleOwner) { root.renderNotification(it) }
+        viewModel.observeNavigation(viewLifecycleOwner) { root.viewModel.navigate(it) }
 
         setupViews()
     }

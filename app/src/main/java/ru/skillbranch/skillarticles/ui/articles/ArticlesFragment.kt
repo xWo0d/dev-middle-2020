@@ -3,7 +3,6 @@ package ru.skillbranch.skillarticles.ui.articles
 import android.util.Log
 import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
@@ -16,6 +15,7 @@ import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesAdapter
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 
 class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
 
@@ -36,7 +36,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             item.title
         )
 
-        findNavController().navigate(direction)
+        viewModel.navigate(NavigationCommand.To(direction.actionId, direction.arguments))
     }
 
     override fun setupViews() {
