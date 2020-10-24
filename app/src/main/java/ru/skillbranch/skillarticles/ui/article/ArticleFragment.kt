@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -99,6 +100,14 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_title.text = args.title
         tv_author.text = args.author
         tv_date.text = args.date.format()
+
+        et_comment.setOnEditorActionListener { view, _, _ ->
+            root.hideKeyboard(view)
+//            viewModel.handleSendComment()
+            val action = ArticleFragmentDirections.startLogin()
+            findNavController().navigate(action)
+            true
+        }
     }
 
     override fun showSearchBar() {

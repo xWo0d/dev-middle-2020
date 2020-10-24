@@ -98,6 +98,14 @@ object LocalDataHolder {
             )
         )
     }
+
+    fun isAuth(): LiveData<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    fun setAuth(auth: Boolean) {
+        TODO("Not yet implemented")
+    }
 }
 
 object NetworkDataHolder {

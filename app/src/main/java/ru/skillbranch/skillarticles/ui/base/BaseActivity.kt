@@ -111,6 +111,10 @@ class ToolbarBuilder {
     }
 
     fun build(context: FragmentActivity) {
+
+        // show appbar if hidden due to scroll behavior
+        context.appbar.setExpanded(true, true)
+
         with(context.toolbar) {
             this@ToolbarBuilder.title?.let { this.title = it }
             this.subtitle = this@ToolbarBuilder.subtitle

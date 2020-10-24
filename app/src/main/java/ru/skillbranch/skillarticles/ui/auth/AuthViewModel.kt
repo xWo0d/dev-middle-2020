@@ -1,0 +1,23 @@
+package ru.skillbranch.skillarticles.ui.auth
+
+import androidx.lifecycle.SavedStateHandle
+import ru.skillbranch.skillarticles.data.repositories.RootRepository
+import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+
+class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle, AuthState()) {
+    private val repository = RootRepository
+
+    init {
+//        subscribeOnDataSource(repository.isAuth()) { isAuth, state ->
+//            state.copy(isAuth = isAuth)
+//        }
+    }
+
+    fun handleLogin(login: String, password: String, dst: Int?) {
+//        repository.setAuth(true)
+        //TODO do something with navigation
+    }
+}
+
+data class AuthState(val isAuth: Boolean = false) : IViewModelState
