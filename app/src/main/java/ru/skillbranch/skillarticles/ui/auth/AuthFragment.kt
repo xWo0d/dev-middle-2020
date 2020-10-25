@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.viewmodels.auth
+package ru.skillbranch.skillarticles.ui.auth
 
 import android.text.Spannable
 import androidx.core.text.set
@@ -7,9 +7,9 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_auth.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
-import ru.skillbranch.skillarticles.ui.auth.AuthViewModel
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.custom.spans.UnderlineSpan
+import ru.skillbranch.skillarticles.viewmodels.auth.AuthViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 
 class AuthFragment : BaseFragment<AuthViewModel>() {

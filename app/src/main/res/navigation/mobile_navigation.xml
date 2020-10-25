@@ -65,7 +65,7 @@
         android:label="@string/title_authorization">
         <fragment
             android:id="@+id/nav_auth"
-            android:name="ru.skillbranch.skillarticles.viewmodels.auth.AuthFragment"
+            android:name="ru.skillbranch.skillarticles.ui.auth.AuthFragment"
             android:label="@string/title_authorization"
             tools:layout="@layout/fragment_auth" >
             <action
