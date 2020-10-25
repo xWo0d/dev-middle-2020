@@ -11,7 +11,6 @@ import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
-import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesAdapter
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
@@ -23,31 +22,32 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
     override val layout: Int = R.layout.fragment_articles
     override val binding: ArticlesBinding by lazy { ArticlesBinding() }
 
-    private val articlesAdapter = ArticlesAdapter() { item ->
-        Log.e("ArticlesFragment", "click on article: ${item.id}")
-        val direction = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
-            item.id,
-            item.author,
-            item.authorAvatar,
-            item.category,
-            item.categoryIcon,
-            item.date,
-            item.poster,
-            item.title
-        )
+    private val articlesAdapter =
+        ArticlesAdapter() { item ->
+            Log.e("ArticlesFragment", "click on article: ${item.id}")
+            val direction = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
+                item.id,
+                item.author,
+                item.authorAvatar,
+                item.category,
+                item.categoryIcon,
+                item.date,
+                item.poster,
+                item.title
+            )
 
-        viewModel.navigate(NavigationCommand.To(direction.actionId, direction.arguments))
-    }
+            viewModel.navigate(NavigationCommand.To(direction.actionId, direction.arguments))
+        }
 
     override fun setupViews() {
-        with (rv_articles) {
+        with(rv_articles) {
             layoutManager = LinearLayoutManager(context)
             adapter = articlesAdapter
             addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
         }
     }
 
-    inner class ArticlesBinding: Binding() {
+    inner class ArticlesBinding : Binding() {
         private var articles: List<ArticleItemData> by RenderProp(emptyList()) {
             articlesAdapter.submitList(it)
         }

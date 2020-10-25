@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.viewmodels.articles
+package ru.skillbranch.skillarticles.ui.articles
 
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +18,9 @@ import ru.skillbranch.skillarticles.extensions.format
 
 class ArticlesAdapter(
     private val listener: (ArticleItemData) -> Unit
-): ListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
+): ListAdapter<ArticleItemData, ArticleVH>(
+    ArticleDiffCallback()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
         val containerView = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
