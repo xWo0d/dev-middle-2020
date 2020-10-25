@@ -83,7 +83,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
             is NavigationCommand.StartLogin -> {
                 navController.navigate(
                     R.id.start_login,
-                    bundleOf("private_destionation" to (command.privateDestination ?: -1))
+                    bundleOf("private_destination" to (command.privateDestination ?: -1))
                 )
             }
         }

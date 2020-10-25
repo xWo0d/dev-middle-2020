@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.extensions.selectDestination
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.viewmodels.RootViewModel
@@ -33,7 +34,6 @@ class RootActivity : BaseActivity<RootViewModel>() {
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-//        nav_view.setupWithNavController(navController)
 
         nav_view.setOnNavigationItemSelectedListener {
             // if click on bottom navigation item -> navigate to destination by item id
@@ -42,9 +42,8 @@ class RootActivity : BaseActivity<RootViewModel>() {
         }
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            // TODO write extension
             // if destination change set select bottom bar navigation item
-//            nav_view.selectDestination(destination)
+            nav_view.selectDestination(destination)
         }
     }
 
