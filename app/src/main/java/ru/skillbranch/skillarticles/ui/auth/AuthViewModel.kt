@@ -20,6 +20,11 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
         navigate(NavigationCommand.FinishLogin(dest))
         //TODO do something with navigation
     }
+
+    fun handleCloseLogin(dest: Int?) {
+        navigate(NavigationCommand.FinishLogin(dest))
+        //TODO do something with navigation
+    }
 }
 
 data class AuthState(val isAuth: Boolean = false) : IViewModelState
