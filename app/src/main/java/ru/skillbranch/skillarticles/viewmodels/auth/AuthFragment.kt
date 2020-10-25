@@ -17,13 +17,16 @@ class AuthFragment : BaseFragment<AuthViewModel>() {
     override val viewModel: AuthViewModel by viewModels()
     override val layout: Int = R.layout.fragment_auth
     private val args: AuthFragmentArgs by navArgs()
+    private var loginOrLinkWasClicked = false
 
     override fun setupViews() {
         tv_privacy.setOnClickListener {
+            loginOrLinkWasClicked = true
             viewModel.navigate(NavigationCommand.To(R.id.page_privacy_policy))
         }
 
         btn_login.setOnClickListener {
+            loginOrLinkWasClicked = true
             viewModel.handleLogin(
                 et_login.text.toString(),
                 et_password.text.toString(),
@@ -37,7 +40,7 @@ class AuthFragment : BaseFragment<AuthViewModel>() {
     }
 
     override fun onDestroyView() {
-        viewModel.handleCloseLogin(args.privateDestination.takeIf { it != -1 })
+        if (!loginOrLinkWasClicked) viewModel.handleCloseLogin(args.privateDestination)
         super.onDestroyView()
     }
 }
