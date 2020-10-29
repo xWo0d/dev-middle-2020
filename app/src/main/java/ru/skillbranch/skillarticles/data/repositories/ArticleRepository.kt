@@ -7,10 +7,7 @@ import androidx.paging.DataSource
 import androidx.paging.ItemKeyedDataSource
 import ru.skillbranch.skillarticles.data.LocalDataHolder
 import ru.skillbranch.skillarticles.data.NetworkDataHolder
-import ru.skillbranch.skillarticles.data.models.AppSettings
-import ru.skillbranch.skillarticles.data.models.ArticleData
-import ru.skillbranch.skillarticles.data.models.ArticlePersonalInfo
-import ru.skillbranch.skillarticles.data.models.CommentItemData
+import ru.skillbranch.skillarticles.data.models.*
 import java.lang.Thread.sleep
 import kotlin.math.abs
 
@@ -52,7 +49,11 @@ object ArticleRepository {
             totalCount = totalCount
         )
 
-    private fun loadCommentsByRange(slug: String?, size: Int, articleId: String): List<CommentItemData> {
+    private fun loadCommentsByRange(
+        slug: String?,
+        size: Int,
+        articleId: String
+    ): List<CommentItemData> {
         val data = network.commentsData.getOrElse(articleId) { mutableListOf() }
         return when {
             slug == null -> data
@@ -72,6 +73,20 @@ object ArticleRepository {
         }.apply {
             sleep(5000)
         }
+    }
+
+    fun sendComment(articleId: String, comment: String, answerToSlug: String?) {
+        network.sendMessage(
+            articleId,
+            comment,
+            answerToSlug,
+            User(
+                "777",
+                "John Doe",
+                "https://skill-branch.ru/img/mail/bot/android-category.png"
+            )
+        )
+        local.incrementCommentsCount(articleId)
     }
 
 }
