@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -12,6 +13,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -44,6 +46,12 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             owner = this,
             params = args.articleId
         )
+    }
+
+    private val commentsAdapter by lazy {
+        CommentsAdapter {
+            Log.e("ArticleFragment", "click on comment: ${it.id} ${it.slug}")
+        }
     }
 
     override val layout: Int = R.layout.fragment_article
@@ -113,6 +121,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             findNavController().navigate(action)
             true
         }
+
+        with(rv_comments) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = commentsAdapter
+        }
+
+        viewModel.observeList(this) { commentsAdapter.submitList(it) }
     }
 
     override fun showSearchBar() {

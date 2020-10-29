@@ -4,18 +4,42 @@ import android.util.Log
 import androidx.paging.DataSource
 import androidx.paging.PositionalDataSource
 import ru.skillbranch.skillarticles.data.LocalDataHolder
+import ru.skillbranch.skillarticles.data.NetworkDataHolder
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
+import java.lang.Thread.sleep
 
 class ArticlesRepository {
 
     private val local = LocalDataHolder
+    private val network = NetworkDataHolder
 
     fun allArticles(): ArticleDataFactory =
         ArticleDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
 
+    fun searchArticles(query: String): ArticleDataFactory =
+        ArticleDataFactory(ArticleStrategy.SearchArticle(::findArticlesByTitle, query))
+
     fun findArticlesByRange(start: Int, size: Int) = local.localArticleItems
         .drop(start)
         .take(size)
+
+    fun findArticlesByTitle(start: Int, size: Int, query: String) = local.localArticleItems
+        .asSequence()
+        .filter { it.title.contains(query, true) }
+        .drop(start)
+        .take(size)
+        .toList()
+
+    fun loadArticlesFromNetwork(start: Int, size: Int): List<ArticleItemData> =
+        network.networkArticleItems
+            .drop(start)
+            .take(size)
+            .apply { sleep(500) }
+
+    fun insertArticlesToDb(articles: List<ArticleItemData>) = local.localArticleItems
+        .addAll(articles)
+        .apply { sleep(500) }
+
 }
 
 class ArticleDataFactory(val strategy: ArticleStrategy) :
