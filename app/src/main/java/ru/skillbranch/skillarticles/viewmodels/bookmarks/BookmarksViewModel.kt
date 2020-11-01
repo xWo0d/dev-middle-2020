@@ -107,6 +107,7 @@ class BookmarksViewModel(handle: SavedStateHandle) :
 
     fun handleToggleBookmark(id: String, isChecked: Boolean) {
         repository.updateBookmark(id, isChecked)
+        updateState { currentState }
     }
 }
 
