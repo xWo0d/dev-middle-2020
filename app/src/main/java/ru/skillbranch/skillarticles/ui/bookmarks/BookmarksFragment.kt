@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_bookmarks.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.articles.ArticlesAdapter
-import ru.skillbranch.skillarticles.ui.articles.ArticlesFragmentDirections
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
@@ -88,7 +87,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
     private val articlesAdapter = ArticlesAdapter(
         onItemClickListener = { item ->
             Log.e("BookmarksFragment", "click on article: ${item.id}")
-            val direction = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
+            val direction = BookmarksFragmentDirections.actionNavBookmarksToPageArticle(
                 item.id,
                 item.author,
                 item.authorAvatar,
