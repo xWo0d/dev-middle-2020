@@ -238,9 +238,15 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     inner class ArticleBinding : Binding() {
         var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
+
         private var isLoadingContent by RenderProp(true)
 
         private var isLike: Boolean by RenderProp(false) { bottombar.btn_like.isChecked = it }
+
+        private var commentText: String by RenderProp("") {
+            et_comment.setText(it)
+        }
+
         private var isBookmark: Boolean by RenderProp(false) {
             bottombar.btn_bookmark.isChecked = it
         }
@@ -338,6 +344,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             searchResults = data.searchResults
             answerTo = data.answerTo ?: "Comment"
             isShowBottomBar = data.showBottomBar
+            commentText = data.commentText ?: ""
         }
 
         override fun saveUi(outState: Bundle) {

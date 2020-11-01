@@ -37,9 +37,10 @@ class ArticleViewModel(
             .build()
     }
 
-    private val listData: LiveData<PagedList<CommentItemData>> = Transformations.switchMap(getArticleData()) {
-        buildPagedList(repository.allComments(articleId, it?.commentCount ?: 0))
-    }
+    private val listData: LiveData<PagedList<CommentItemData>> =
+        Transformations.switchMap(getArticleData()) {
+            buildPagedList(repository.allComments(articleId, it?.commentCount ?: 0))
+        }
 
     init {
         // subscribe on mutable data
@@ -181,11 +182,18 @@ class ArticleViewModel(
     }
 
     fun handleSendComment(comment: String) {
-        if (!currentState.isAuth) navigate(NavigationCommand.StartLogin())
-        viewModelScope.launch {
+        if (!currentState.isAuth) {
+            navigate(NavigationCommand.StartLogin()).also {
+                updateState { it.copy(commentText = comment) }
+            }
+        } else viewModelScope.launch {
             repository.sendComment(articleId, comment, currentState.answerToSlug)
             withContext(Dispatchers.Main) {
-                updateState { it.copy(answerTo = null, answerToSlug = null) }
+                updateState { it.copy(
+                    answerTo = null,
+                    answerToSlug = null,
+                    commentText = null
+                ) }
             }
         }
     }
@@ -244,11 +252,11 @@ data class ArticleState(
     val commentsCount: Int = 0,
     val answerTo: String? = null,
     val answerToSlug: String? = null,
-    val showBottomBar: Boolean = true
+    val showBottomBar: Boolean = true,
+    val commentText: String? = null
 ) : IViewModelState {
 
     override fun save(outState: SavedStateHandle) {
-        //TODO save state
         outState.set("isSearch", isSearch)
         outState.set("searchQuery", searchQuery)
         outState.set("searchResult", searchResults)
@@ -256,7 +264,6 @@ data class ArticleState(
     }
 
     override fun restore(savedState: SavedStateHandle): ArticleState {
-        //TODO restore state
         return copy(
             isSearch = savedState["isSearch"] ?: false,
             searchQuery = savedState["searchQuery"],
