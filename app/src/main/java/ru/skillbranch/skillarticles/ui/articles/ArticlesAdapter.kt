@@ -15,9 +15,11 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.ui.custom.CheckableImageView
 
 class ArticlesAdapter(
-    private val listener: (ArticleItemData) -> Unit
+    private val onItemClickListener: (ArticleItemData) -> Unit,
+    private val onBookmarkClickListener: (ArticleItemData) -> Unit
 ): PagedListAdapter<ArticleItemData, ArticleVH>(
     ArticleDiffCallback()
 ) {
@@ -28,7 +30,11 @@ class ArticlesAdapter(
     }
 
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
-        holder.bind(getItem(position), listener)
+        holder.bind(
+            getItem(position),
+            onItemClickListener,
+            onBookmarkClickListener
+        )
     }
 }
 
@@ -45,7 +51,11 @@ class ArticleDiffCallback: DiffUtil.ItemCallback<ArticleItemData>() {
 class ArticleVH(override val containerView: View): RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     // item may be null when we use placeholder
-    fun bind(item: ArticleItemData?, listener: (ArticleItemData) -> Unit) {
+    fun bind(
+        item: ArticleItemData?,
+        listener: (ArticleItemData) -> Unit,
+        onBookmarkClickListener: (ArticleItemData) -> Unit
+    ) {
         val posterSize = containerView.context.dpToIntPx(64)
         val cornerRadius = containerView.context.dpToIntPx(8)
         val categorySize = containerView.context.dpToIntPx(40)
@@ -69,6 +79,11 @@ class ArticleVH(override val containerView: View): RecyclerView.ViewHolder(conta
         tv_likes_count.text = "${item?.likeCount}"
         tv_comments_count.text = "${item?.commentCount}"
         tv_read_duration.text = "${item?.readDuration}"
+
+        iv_bookmark.isChecked = item?.isBookmark ?: false
+        iv_bookmark.setOnClickListener {
+            (it as CheckableImageView).toggle()
+            onBookmarkClickListener(item!!) }
 
         itemView.setOnClickListener { listener(item!!) }
     }

@@ -150,15 +150,18 @@
         app:layout_constraintTop_toTopOf="@+id/tv_comments_count"
         tools:text="3 min read" />
 
-    <ImageView
+    <ru.skillbranch.skillarticles.ui.custom.CheckableImageView
         android:id="@+id/iv_bookmark"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:background="@drawable/ripple"
+        android:src="@drawable/bookmark_states"
         android:tint="@color/color_gray"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="@+id/tv_likes_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_read_duration"
-        app:layout_constraintTop_toTopOf="@+id/tv_likes_count"
-        app:srcCompat="@drawable/ic_bookmark_border_black_24dp" />
+        app:layout_constraintTop_toTopOf="@+id/tv_likes_count" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

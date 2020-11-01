@@ -40,6 +40,14 @@ class ArticlesRepository {
         .addAll(articles)
         .apply { sleep(500) }
 
+    fun updateBookmark(id: String, isChecked: Boolean) {
+        local.localArticleItems.indexOfFirst { it.id == id }.let { index ->
+            if (index != -1) {
+                local.localArticleItems[index] = local.localArticleItems[index].copy(isBookmark = isChecked)
+            }
+        }
+    }
+
 }
 
 class ArticleDataFactory(val strategy: ArticleStrategy) :

@@ -84,7 +84,8 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         }
     }
 
-    private val articlesAdapter = ArticlesAdapter { item ->
+    private val articlesAdapter = ArticlesAdapter(
+        onItemClickListener = { item ->
             Log.e("ArticlesFragment", "click on article: ${item.id}")
             val direction = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
                 item.id,
@@ -98,7 +99,11 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             )
 
             viewModel.navigate(NavigationCommand.To(direction.actionId, direction.arguments))
+        },
+        onBookmarkClickListener = { item ->
+            viewModel.handleToggleBookmark(item.id, !item.isBookmark)
         }
+    )
 
     override fun setupViews() {
         with(rv_articles) {
