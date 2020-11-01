@@ -2,7 +2,7 @@
 <androidx.recyclerview.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rv_bookmark_articles"
+    android:id="@+id/rv_bookmarks"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.articles.ArticlesFragment"

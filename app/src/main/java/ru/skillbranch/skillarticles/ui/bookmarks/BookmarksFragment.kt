@@ -106,7 +106,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
     )
 
     override fun setupViews() {
-        with(rv_bookmark_articles) {
+        with(rv_bookmarks) {
             layoutManager = LinearLayoutManager(context)
             adapter = articlesAdapter
             addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
